@@ -1,4 +1,4 @@
-{% extends "customer_base.html" %}
+{% extends "customer/customer_base.html" %}
 
 {% block title %}Cart{% endblock %}
 
@@ -36,7 +36,7 @@
                         </select>
                     </td>
                     <td>
-                        <form action="{{ url_for('delete_from_cart', index=index) }}" method="post" style="display:inline;">
+                        <form action="{{ url_for('customer.delete_from_cart', index=index) }}" method="post" style="display:inline;">
                             <button type="submit" class="btn btn-danger">Delete</button>
                         </form>
                     </td>
@@ -50,7 +50,7 @@
         </tbody>
     </table>
 
-    <form action="{{ url_for('submit_cart') }}" method="POST">
+    <form action="{{ url_for('customer.submit_cart') }}" method="POST">
         <button type="submit" class="btn btn-primary">Submit</button>
     </form>
 
@@ -90,7 +90,7 @@ document.addEventListener('DOMContentLoaded', () => {
     quantityDropdowns.forEach(dropdown => {
         dropdown.addEventListener('change', (event) => {
             const rowIndex = Array.from(dropdown.parentNode.parentNode.parentNode.children).indexOf(dropdown.parentNode.parentNode);
-            fetch('http://127.0.0.1:5000/update_quantity', {
+            fetch('http://127.0.0.1:5000/customer/update_quantity', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'

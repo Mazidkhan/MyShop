@@ -12,11 +12,11 @@
         <div class="sidebar">
             <h3>Menu</h3>
             <ul>
-                <li><a href="{{ url_for('customer_products') }}">Products</a></li>
-                <li><a href="{{ url_for('carts') }}">Carts {{ cartcount }}</a></li>
-                <li><a href="{{ url_for('customer_orders') }}">Orders {{ count }}</a></li>
-                <li><a href="{{ url_for('customer_delivery') }}">Delivery Status</a></li>
-                <li><a href="{{ url_for('customer_logout') }}">Logout</a></li>
+                <li><a href="{{ url_for('customer.customer_products') }}">Products</a></li>
+                <li><a href="{{ url_for('customer.carts') }}">Carts {{ cartcount }}</a></li>
+                <li><a href="{{ url_for('customer.customer_orders') }}">Orders {{ count }}</a></li>
+                <li><a href="{{ url_for('customer.customer_delivery') }}">Delivery Status</a></li>
+                <li><a href="{{ url_for('customer.customer_logout') }}">Logout</a></li>
             </ul>
         </div>
         <div class="content">

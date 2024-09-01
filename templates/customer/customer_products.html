@@ -1,4 +1,4 @@
-{% extends "customer_base.html" %}
+{% extends "customer/customer_base.html" %}
 
 {% block title %}Products{% endblock %}
 
@@ -34,7 +34,7 @@
 <!-- Add JavaScript -->
 <script>
 function addToCart(productId) {
-    fetch('http://127.0.0.1:5000/add_to_cart', {
+    fetch('http://127.0.0.1:5000/customer/add_to_cart', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',

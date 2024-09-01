@@ -1,0 +1,33 @@
+{% extends "customer/customer_base.html" %}
+
+{% block title %}Products{% endblock %}
+
+{% block content %}
+<h1>Deliveries</h1>
+
+<h2>Delivery Status</h2>
+<div class="table-container">
+    <table>
+        <thead>
+            <tr>
+                <th>OrderID</th>
+                <th>Assignee</th>
+                <th>Phone</th>
+                <th>Email</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for delivery in deliveries %}
+            <tr>
+                <td>{{ delivery['order_id'] }}</td>
+                <td>{{ delivery['delivery_boy'] }}</td>
+                <td>{{ delivery_boy[0]['phone'] }}</td>
+                <td>{{ delivery_boy[0]['email'] }}</td>
+                <td>{{ delivery['status'] }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

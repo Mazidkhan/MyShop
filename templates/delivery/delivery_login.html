@@ -8,15 +8,15 @@
 </head>
 <body>
     <div class="login-container">
-        <h2>Admin Login</h2>
-        <form method="POST" action="{{ url_for('admin') }}">
+        <h2>Delivery Login</h2>
+        <form method="POST" action="{{ url_for('delivery.delivery') }}">
             <div>
-                <label for="admin_name">Username:</label>
-                <input type="text" id="admin_name" name="admin_name" required>
+                <label for="delivery_boy">Username:</label>
+                <input type="text" id="delivery_boy" name="delivery_boy" required>
             </div>
             <div>
-                <label for="admin_password">Password:</label>
-                <input type="password" id="admin_password" name="admin_password" required>
+                <label for="delivery_password">Password:</label>
+                <input type="password" id="delivery_password" name="delivery_password" required>
             </div>
             <button id="loginButton" type="submit">Login</button>
         </form>

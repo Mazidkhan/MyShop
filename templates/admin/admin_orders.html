@@ -1,4 +1,4 @@
-{% extends "admin_base.html" %}
+{% extends "admin/admin_base.html" %}
 
 {% block title %}Products{% endblock %}
 
@@ -87,7 +87,7 @@
 
     // Populate the Order ID dropdown with values from the database
     document.addEventListener('DOMContentLoaded', function() {
-        fetch('http://127.0.0.1:5000/get_order_ids') // Flask route to fetch order IDs
+        fetch('http://127.0.0.1:5000/admin/get_order_ids') // Flask route to fetch order IDs
         .then(response => response.json())
         .then(data => {
             var select = document.getElementById('orderId');
@@ -115,7 +115,7 @@
         var deliveryBoy = document.getElementById('deliveryBoy').value;
 
         if (orderId && deliveryBoy) {
-            fetch('http://127.0.0.1:5000/assign_order', {
+            fetch('http://127.0.0.1:5000/admin/assign_order', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'

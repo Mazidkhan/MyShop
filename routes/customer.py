@@ -1,0 +1,231 @@
+from flask import Blueprint, render_template, request, session, url_for, redirect, jsonify, flash
+import sqlite3
+import uuid
+import os
+from datetime import datetime
+
+customer_bp = Blueprint('customer', __name__, template_folder='../templates/customer')
+
+def get_db_connection():
+    conn = sqlite3.connect('ecommerce.db')
+    conn.row_factory = sqlite3.Row
+    return conn
+
+def get_cart_count():
+    if 'cart' in session:
+        return len(session['cart'])
+    else:
+        return 0
+
+def get_product_by_id(product_id):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute('SELECT * FROM products WHERE id = ?', (product_id,))
+    product = cursor.fetchone()
+    conn.close()
+    return product
+
+def customer_orders_count():
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute('SELECT count(*) FROM orders WHERE customer_name = ?', (session['customer_name'],))
+    count = cursor.fetchone()[0]
+    return count
+
+@customer_bp.route('/submit_cart', methods=['POST'])
+def submit_cart():
+    customer_name = session.get('customer_name')
+    customer_phone = session.get('customer_phone')
+    customer_address = session.get('customer_address')
+    cart = session.get('cart', [])
+    if not customer_name or not cart:
+        flash('No cart items or customer information available.', 'error')
+        return redirect(url_for('customer.carts'))
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    current_date = datetime.now().strftime('%Y-%m-%d')
+
+    try:
+        # Generate a unique cart ID (UUID)
+        cart_id = str(uuid.uuid4())
+
+        # Insert all items in the cart with the same cart_id
+        for item in cart:
+            cursor.execute('''
+                INSERT INTO orders (id, customer_name, product_name, product_brand, product_category, quantity, price, total_price, date, phone, address)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            ''', (
+                cart_id,  # Use the same unique cart_id for all items in the cart
+                customer_name,
+                item['product_name'],
+                item['product_brand'],
+                item['product_category'],
+                item['quantity'],
+                item['price'],
+                item['quantity'] * item['price'],
+                current_date,
+                customer_phone,
+                customer_address
+            ))
+
+        conn.commit()
+        session.pop('cart', None)  # Clear the cart session
+        flash('Order placed successfully!', 'success')
+    except Exception as e:
+        conn.rollback()
+        flash(f'An error occurred: {e}', 'error')
+    finally:
+        conn.close()
+
+    return redirect(url_for('customer.carts'))
+
+@customer_bp.route('/add_to_cart', methods=['POST'])
+def add_to_cart():
+    product_id = request.json.get('product_id')
+    product = get_product_by_id(product_id)  # Implement this function to get product details
+    if not product:
+        return jsonify({'message': 'Product not found!'}), 404
+
+    if 'cart' not in session:
+        session['cart'] = []
+
+    cart = session['cart']
+    for item in cart:
+        if item['product_id'] == product[0]:
+            item['quantity'] += 1  # Increase quantity if product already in cart
+            session.modified = True
+            return jsonify({'message': 'Product quantity updated in cart!'})
+
+    session['cart'].append({
+        'product_id': product[0],
+        'product_name': product[1],
+        'product_brand': product[2],
+        'product_category': product[3],
+        'price': product[4],
+        'discount': product[5],
+        'image1': product[7],
+        'quantity': 1
+    })
+
+    session.modified = True
+    return jsonify({'message': 'Product added to cart!'})
+
+@customer_bp.route('/update_quantity', methods=['POST'])
+def update_quantity():
+    index = request.json.get('index')
+    new_quantity = request.json.get('quantity')
+
+    if 'cart' not in session:
+        return jsonify({'message': 'Cart is empty!'}), 400
+
+    cart = session['cart']
+    if index < 0 or index >= len(cart):
+        return jsonify({'message': 'Invalid index!'}), 400
+
+    cart[index]['quantity'] = int(new_quantity)
+    session.modified = True
+    return jsonify({'message': 'Quantity updated!'})
+
+@customer_bp.route('/delete_from_cart/<int:index>', methods=['POST'])
+def delete_from_cart(index):
+    cart_items = session.get('cart', [])
+
+    if 0 <= index < len(cart_items):
+        # Remove the item at the specified index
+        del cart_items[index]
+        session['cart'] = cart_items  # Update the cart in the session
+        session.modified = True  # Mark the session as modified
+
+    return redirect(url_for('customer.carts'))
+
+@customer_bp.route('/deliveries')
+def customer_delivery():
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute('SELECT * FROM delivery_orders WHERE customer_name = ?', (session['customer_name'],))
+    deliveries = cursor.fetchall()
+    cursor.execute('SELECT * FROM delivery_boys WHERE delivery_boy = ?', (deliveries[0][2],))
+    delivery_boy = cursor.fetchall()
+    return render_template('/customer/customer_deliveries.html', deliveries=deliveries,delivery_boy=delivery_boy,cartcount=get_cart_count(),count=customer_orders_count())
+
+@customer_bp.route('/logout')
+def customer_logout():
+    session.pop('customer_name', None)
+    return redirect(url_for('customer.customer'))
+
+@customer_bp.route('/products')
+def customer_products():
+    page = int(request.args.get('page', 1))
+    per_page = 6  # Number of products per page
+    offset = (page - 1) * per_page
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    # Get total number of products
+    cursor.execute('SELECT COUNT(*) FROM products')
+    total_products = cursor.fetchone()[0]
+
+    # Fetch products for the current page
+    cursor.execute(
+        'SELECT image1, product_name, product_brand, product_category, price, discount, id FROM products LIMIT ? OFFSET ?',
+        (per_page, offset))
+    products = cursor.fetchall()
+
+    conn.close()
+
+    total_pages = (total_products + per_page - 1) // per_page  # Calculate total pages
+    return render_template('/customer/customer_products.html', products=products, page=page, total_pages=total_pages,count=customer_orders_count(),cartcount=get_cart_count())
+
+@customer_bp.route('/carts')
+def carts():
+    cart_items = session.get('cart', [])
+    grand_total = 0
+    for index, item in enumerate(cart_items):
+        quantity = request.form.get('quantity',1, type=int)
+        price = item['price']
+        discount = item['discount']
+        total_price = (price * (1 - discount / 100)) * quantity
+        grand_total = grand_total + total_price
+
+    return render_template('/customer/customer_carts.html', cart_items=cart_items, enumerate=enumerate,grand_total=grand_total,count=customer_orders_count(),cartcount=get_cart_count())
+
+@customer_bp.route('/orders')
+def customer_orders():
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute('SELECT * FROM orders WHERE customer_name = ?', (session['customer_name'],))
+    orders = cursor.fetchall()
+    return render_template('/customer/customer_orders.html',orders=orders,count=customer_orders_count(),cartcount=get_cart_count())
+
+@customer_bp.route('/', methods=['GET', 'POST'])
+def customer():
+    if request.method == 'POST':
+        if 'login_submit' in request.form:
+            username = request.form['username']
+            password = request.form['password']
+            conn = get_db_connection()
+            user = conn.execute('SELECT * FROM customer WHERE customer_name = ? AND customer_password = ?',
+                                (username, password)).fetchone()
+            conn.close()
+            if user:
+                session['customer_name'] = user['customer_name']
+                session['customer_phone'] = user['phone']
+                session['customer_address'] = user['address']
+                print(f'Count:{customer_orders_count()}')
+                return render_template('/customer/customer_base.html',count=customer_orders_count())
+            else:
+                return 'Invalid credentials'
+        elif 'register_submit' in request.form:
+            username = request.form['username']
+            password = request.form['password']
+            email = request.form['email']
+            phone = request.form['phone']
+            address = request.form['address']
+            conn = get_db_connection()
+            conn.execute('INSERT INTO customer (customer_name, customer_password, email, phone, address) VALUES (?, ?, ?, ?, ?)',
+                         (username, password, email, phone, address))
+            conn.commit()
+            conn.close()
+            return render_template('/customer/customer_base.html',count=customer_orders_count())
+    return render_template('/customer/customer_login_register.html')
