@@ -55,6 +55,14 @@ def delivery_queue():
     deliveries = cursor.fetchall()
     return render_template('delivery_queues.html', deliveries=deliveries)
 
+@delivery_bp.route('/current_queues')
+def delivery_current_queue():
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute('SELECT * FROM delivery_orders WHERE delivery_boy = ? AND status != ?',(session['delivery_name'], 'delivered'))
+    deliveries = cursor.fetchall()
+    return render_template('delivery_current_queues.html', deliveries=deliveries)
+
 @delivery_bp.route('/get-order-details/<order_id>', methods=['GET'])
 def get_order_details(order_id):
     conn = get_db_connection()

@@ -5,38 +5,7 @@
 {% block content %}
 <h1>Deliveries</h1>
 
-<h2>Select Order ID</h2>
-<form id="orderForm" style="display: flex; align-items: center;">
-    <label for="order_id" style="margin-right: 10px;">Order ID:</label>
-    <select id="order_id" name="order_id" style="margin-right: 10px;">
-        {% for delivery in deliveries %}
-        <option value="{{ delivery['order_id'] }}">{{ delivery['order_id'] }}</option>
-        {% endfor %}
-    </select>
-    <button type="button" onclick="fetchOrderDetails()">Get Orders</button>
-</form>
-
-<div id="popupForm" class="popup">
-    <div class="popup-content">
-        <span class="close-btn" onclick="closePopup()">&times;</span>
-        <h2>Order Details</h2>
-        <table id="orderDetailsTable" border="1" cellspacing="0" cellpadding="5">
-            <thead>
-                <tr>
-                    <th>Product Name</th>
-                    <th>Brand</th>
-                    <th>Quantity</th>
-                    <th>Price</th>
-                </tr>
-            </thead>
-            <tbody id="orderDetailsBody">
-                <!-- Order details will be populated here dynamically -->
-            </tbody>
-        </table>
-    </div>
-</div>
-
-<h2>Delivery Status</h2>
+<h2>Delivery History</h2>
 <div class="table-container">
     <table>
         <thead>
@@ -46,7 +15,6 @@
                 <th>Phone</th>
                 <th>Address</th>
                 <th>Status</th>
-                <th>Actions</th>
             </tr>
         </thead>
         <tbody>
@@ -57,13 +25,6 @@
                 <td>{{ delivery['phone'] }}</td>
                 <td>{{ delivery['address'] }}</td>
                 <td>{{ delivery['status'] }}</td>
-                <td>
-                    <select class="status-dropdown" data-order-id="{{ delivery['order_id'] }}">
-                        <option value="out_for_delivery">Out for Delivery</option>
-                        <option value="delivered">Delivered</option>
-                    </select>
-                    <button class="update-btn" onclick="updateStatus('{{ delivery['order_id'] }}')">Update</button>
-                </td>
             </tr>
             {% endfor %}
         </tbody>
@@ -120,79 +81,5 @@ th {
 
 </style>
 
-<script>
-    // Function to update the status of an order
-function updateStatus(orderID) {
-    const dropdown = document.querySelector(`.status-dropdown[data-order-id="${orderID}"]`);
-    const selectedStatus = dropdown.value;
-
-    const data = {
-        status: selectedStatus
-    };
-
-    // Send data to server
-    fetch(`/delivery/update-order-status/${orderID}`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(data)
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.message === 'Order status updated successfully!') {
-            alert('Order status updated successfully!');
-            location.reload(); // Refresh the page to reflect the changes
-        } else {
-            alert('Failed to update order status.');
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        alert('An error occurred while updating the order status.');
-    });
-}
-
-// Function to close the popup
-function closePopup() {
-    document.getElementById('popupForm').style.display = 'none';
-}
-
-// Function to fetch and display order details
-function fetchOrderDetails() {
-    console.log("Button clicked!"); // Add this line to check
-    var orderID = document.getElementById('order_id').value;
-
-    fetch('/delivery/get-order-details/' + orderID)
-    .then(response => response.json())
-    .then(data => {
-        console.log("Data received:", data); // Log data to verify it's received
-
-        // Clear previous order details
-        var orderDetailsBody = document.getElementById('orderDetailsBody');
-        orderDetailsBody.innerHTML = '';
-
-        // Populate order details in the table
-        data.forEach(item => {
-            var row = document.createElement('tr');
-            row.innerHTML = `
-                <td>${item.product_name}</td>
-                <td>${item.product_brand}</td>
-                <td>${item.quantity}</td>
-                <td>${item.price}</td>
-            `;
-            orderDetailsBody.appendChild(row);
-        });
-
-        // Display the popup
-        document.getElementById('popupForm').style.display = 'flex';
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        alert('An error occurred while fetching order details.');
-    });
-}
-
-</script>
 
 {% endblock %}

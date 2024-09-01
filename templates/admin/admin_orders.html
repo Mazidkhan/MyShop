@@ -22,6 +22,14 @@
         </div>
     </div>
 <button id="assignOrderBtn">Assign Order</button>
+<label for="orderStatus">Filter by Status:</label>
+<select id="orderStatus">
+    <option value="all">All</option>
+    <option value="In Process">In Process</option>
+    <option value="delivered">Delivered</option>
+    <option value="out_for_delivery">Out for Delivery</option>
+</select>
+<button id="filterStatusBtn">Filter</button>
 <h2>Orders List</h2>
 <div class="table-container">
     <table>
@@ -140,5 +148,40 @@
             alert('Please select an order ID and enter a delivery boy name.');
         }
     });
+    // Filter orders by status
+document.getElementById('filterStatusBtn').addEventListener('click', function() {
+    var selectedStatus = document.getElementById('orderStatus').value;
+
+    // Fetch and filter orders based on the selected status
+    fetch('http://127.0.0.1:5000/admin/filter_orders?status=' + selectedStatus)
+    .then(response => response.json())
+    .then(data => {
+        var tbody = document.querySelector('table tbody');
+        tbody.innerHTML = ''; // Clear existing rows
+
+        data.orders.forEach(function(order) {
+            var row = document.createElement('tr');
+
+            row.innerHTML = `
+                <td>${order.id}</td>
+                <td>${order.customer_name}</td>
+                <td>${order.product_name}</td>
+                <td>${order.product_category}</td>
+                <td>${order.product_brand}</td>
+                <td>${order.quantity}</td>
+                <td>$${order.price}</td>
+                <td>$${order.total_price}</td>
+                <td>${order.date}</td>
+                <td>${order.status}</td>
+            `;
+
+            tbody.appendChild(row);
+        });
+    })
+    .catch(error => {
+        console.error('Error fetching orders:', error);
+    });
+});
+
 </script>
 {% endblock %}

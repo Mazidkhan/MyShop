@@ -17,6 +17,13 @@ def secure_filename(filename):
     from werkzeug.utils import secure_filename
     return secure_filename(filename)
 
+def in_process_count():
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute('SELECT count(*) FROM orders WHERE status = ?', ('In Process',))
+    count = cursor.fetchone()[0]
+    return count
+
 @admin_bp.route('/assign_order', methods=['POST'])
 def assign_order():
     data = request.json
@@ -196,7 +203,7 @@ def products():
     if 'admin_name' in session:
         products = conn.execute('SELECT * FROM products').fetchall()
         conn.close()
-        return render_template('admin/admin_products.html', products=products)
+        return render_template('admin/admin_products.html', products=products, count=in_process_count())
 
     return redirect(url_for('admin.admin'))
 
@@ -207,8 +214,29 @@ def orders():
         cursor = conn.cursor()
         cursor.execute('SELECT * FROM orders')
         orders = cursor.fetchall()
-        return render_template('admin/admin_orders.html',orders=orders)
+        return render_template('admin/admin_orders.html',orders=orders, count=in_process_count())
     return redirect(url_for('admin.admin'))
+
+
+@admin_bp.route('/filter_orders')
+def filter_orders():
+    status = request.args.get('status')
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    if status and status != "all":
+        cursor.execute('SELECT * FROM orders WHERE status = ?', (status,))
+    else:
+        cursor.execute('SELECT * FROM orders')
+
+    orders = cursor.fetchall()
+    conn.close()
+
+    orders_data = [dict(row) for row in orders]
+
+    return jsonify(orders=orders_data)
+
 
 @admin_bp.route('/customers')
 def customers():
@@ -217,7 +245,7 @@ def customers():
         cursor = conn.cursor()
         cursor.execute('SELECT * FROM customer')
         customers = cursor.fetchall()
-        return render_template('admin/admin_customers.html',customers=customers)
+        return render_template('admin/admin_customers.html',customers=customers, count=in_process_count())
     return redirect(url_for('admin.admin'))
 
 @admin_bp.route('/logout')
@@ -229,9 +257,9 @@ def logout():
 def deliveries():
     conn = get_db_connection()
     cursor = conn.cursor()
-    cursor.execute('SELECT * FROM delivery_orders')
+    cursor.execute('SELECT * FROM delivery_orders WHERE status != "delivered"')
     deliveries = cursor.fetchall()
-    return render_template('admin/admin_deliveries.html',deliveries=deliveries)
+    return render_template('admin/admin_deliveries.html',deliveries=deliveries, count=in_process_count())
 
 @admin_bp.route('/get_order_ids', methods=['GET'])
 def get_order_ids():
