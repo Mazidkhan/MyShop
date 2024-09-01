@@ -1,0 +1,33 @@
+{% extends "admin_base.html" %}
+
+{% block title %}Products{% endblock %}
+
+{% block content %}
+<h1>Customers</h1>
+
+<h2>Customers List</h2>
+<div class="table-container">
+    <table>
+        <thead>
+            <tr>
+                <th>Customer</th>
+                <th>Password</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>Address</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for customer in customers %}
+            <tr>
+                <td>{{ customer['customer_name'] }}</td>
+                <td>{{ customer['customer_password'] }}</td>
+                <td>{{ customer['email'] }}</td>
+                <td>{{ customer['phone'] }}</td>
+                <td>{{ customer['address'] }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

@@ -1,0 +1,41 @@
+{% extends "customer_base.html" %}
+
+{% block title %}Products{% endblock %}
+
+{% block content %}
+<h1>Orders</h1>
+
+<h2>Orders List</h2>
+<div class="table-container">
+    <table>
+        <thead>
+            <tr>
+                <th>OrderNo</th>
+                <th>Name</th>
+                <th>Category</th>
+                <th>Brand</th>
+                <th>Quantity</th>
+                <th>Price</th>
+                <th>TotalPrice</th>
+                <th>OrderDate</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for order in orders %}
+            <tr>
+                <td>{{ order['id'] }}</td>
+                <td>{{ order['product_name'] }}</td>
+                <td>{{ order['product_category'] }}</td>
+                <td>{{ order['product_brand'] }}</td>
+                <td>{{ order['quantity'] }}</td>
+                <td>${{ order['price'] }}</td>
+                <td>${{ order['total_price'] }}</td>
+                <td>{{ order['date'] }}</td>
+                <td>{{ order['status'] }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

@@ -1,0 +1,206 @@
+{% extends "admin_base.html" %}
+
+{% block title %}Products{% endblock %}
+
+{% block content %}
+<h1>Products</h1>
+
+<!-- Button to open the form -->
+<button id="openFormButton">Add Product</button>
+<!-- Popup Form for Editing -->
+<div id="editFormPopup" class="modal">
+    <div class="modal-content">
+        <span class="close-button" id="closeEditFormButton">&times;</span>
+        <h2>Edit Product</h2>
+        <form id="editProductForm" method="post" enctype="multipart/form-data">
+            <input type="hidden" id="editProductId" name="id">
+            <label for="editProductName">Name:</label>
+            <input type="text" id="editProductName" name="name" required>
+            <br>
+            <label for="editProductBrand">Brand:</label>
+            <input type="text" id="editProductBrand" name="brand" required>
+            <br>
+            <label for="editProductCategory">Category:</label>
+            <input type="text" id="editProductCategory" name="category" required>
+            <br>
+            <label for="editProductPrice">Price:</label>
+            <input type="number" id="editProductPrice" name="price" step="0.01" required>
+            <br>
+            <label for="editProductDiscount">Discount:</label>
+            <input type="number" id="editProductDiscount" name="discount" step="0.01">
+            <br>
+            <label for="editProductStock">Stock:</label>
+            <input type="number" id="editProductStock" name="stock" required>
+            <br>
+            <label for="editProductImage1">Image 1:</label>
+            <input type="file" id="editProductImage1" name="image1">
+            <br>
+            <label for="editProductImage2">Image 2:</label>
+            <input type="file" id="editProductImage2" name="image2">
+            <br>
+            <label for="editProductImage3">Image 3:</label>
+            <input type="file" id="editProductImage3" name="image3">
+            <br>
+            <button type="submit">Update</button>
+        </form>
+    </div>
+</div>
+
+<!-- Popup Form -->
+<div id="popupForm" class="modal">
+    <div class="modal-content">
+        <span class="close-button" id="closeFormButton">&times;</span>
+        <h2>Add New Product</h2>
+        <form id="productForm" method="post" enctype="multipart/form-data">
+            <label for="productName">Name:</label>
+            <input type="text" id="productName" name="name" required>
+            <br>
+            <label for="productBrand">Brand:</label>
+            <input type="text" id="productBrand" name="brand" required>
+            <br>
+            <label for="productCategory">Category:</label>
+            <input type="text" id="productCategory" name="category" required>
+            <br>
+            <label for="productPrice">Price:</label>
+            <input type="number" id="productPrice" name="price" step="0.01" required>
+            <br>
+            <label for="productDiscount">Discount:</label>
+            <input type="number" id="productDiscount" name="discount" step="0.01">
+            <br>
+            <label for="productStock">Stock:</label>
+            <input type="number" id="productStock" name="stock" required>
+            <br>
+            <label for="productImage1">Image 1:</label>
+            <input type="file" id="productImage1" name="image1">
+            <br>
+            <label for="productImage2">Image 2:</label>
+            <input type="file" id="productImage2" name="image2">
+            <br>
+            <label for="productImage3">Image 3:</label>
+            <input type="file" id="productImage3" name="image3">
+            <br>
+            <button type="submit">Submit</button>
+        </form>
+    </div>
+</div>
+
+<!-- Display product records -->
+<h2>Product List</h2>
+<div class="table-container">
+    <table>
+        <thead>
+            <tr>
+                <th>Image</th>
+                <th>Name</th>
+                <th>Category</th>
+                <th>Brand</th>
+                <th>Price</th>
+                <th>Discount</th>
+                <th>Actions</th> <!-- New Actions column -->
+            </tr>
+        </thead>
+        <tbody>
+            {% for product in products %}
+            <tr>
+                <td><img src="{{ url_for('static', filename='images/' ~ product['image1']) }}" alt="{{ product['product_name'] }}" class="product-image"></td>
+                <td>{{ product['product_name'] }}</td>
+                <td>{{ product['product_category'] }}</td>
+                <td>{{ product['product_brand'] }}</td>
+                <td>${{ product['price'] }}</td>
+                <td>{{ product['discount'] }}%</td>
+                <td>
+                    <button class="action-button edit-button" data-id="{{ product['id'] }}">Edit</button>
+                    <button class="action-button delete-button" data-id="{{ product['id'] }}">Delete</button>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var openFormButton = document.getElementById('openFormButton');
+    var popupForm = document.getElementById('popupForm');
+    var closeFormButton = document.getElementById('closeFormButton');
+
+    openFormButton.addEventListener('click', function() {
+        popupForm.style.display = 'flex';
+    });
+
+    closeFormButton.addEventListener('click', function() {
+        popupForm.style.display = 'none';
+    });
+
+    window.addEventListener('click', function(event) {
+        if (event.target == popupForm) {
+            popupForm.style.display = 'none';
+        }
+    });
+
+    // Event listeners for edit and delete buttons
+    document.querySelectorAll('.edit-button').forEach(function(button) {
+        button.addEventListener('click', function() {
+            var id = this.getAttribute('data-id');
+            fetch(`http://127.0.0.1:5000/admin/product/${id}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        alert('Product not found!');
+                        return;
+                    }
+                    document.getElementById('editProductId').value = data.id;
+                    document.getElementById('editProductName').value = data.product_name;
+                    document.getElementById('editProductBrand').value = data.product_brand;
+                    document.getElementById('editProductCategory').value = data.product_category;
+                    document.getElementById('editProductPrice').value = data.price;
+                    document.getElementById('editProductDiscount').value = data.discount;
+                    document.getElementById('editProductStock').value = data.stock;
+                    // Pre-fill images if needed (optional, depending on how you handle images)
+                    document.getElementById('editFormPopup').style.display = 'flex';
+                });
+        });
+    });
+
+    document.querySelectorAll('.delete-button').forEach(function(button) {
+        button.addEventListener('click', function() {
+            var id = this.getAttribute('data-id');
+            if (confirm('Are you sure you want to delete this product?')) {
+                fetch(`http://127.0.0.1:5000/admin/delete_product/${id}`, {
+                    method: 'DELETE',
+                })
+                .then(response => {
+                    if (response.ok) {
+                        // Remove the row from the table
+                        button.closest('tr').remove();
+                        alert('Product deleted successfully!');
+                    } else {
+                        alert('Failed to delete product.');
+                    }
+                });
+            }
+        });
+    });
+
+    document.getElementById('editProductForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        var formData = new FormData(this);
+
+        fetch('http://127.0.0.1:5000/admin/update_product', {
+            method: 'PUT',
+            body: formData
+        })
+        .then(response => {
+            if (response.ok) {
+                alert('Product updated successfully!');
+                location.reload(); // Reload to reflect changes
+            } else {
+                alert('Failed to update product.');
+            }
+        });
+    });
+});
+</script>
+
+{% endblock %}

@@ -1,0 +1,51 @@
+{% extends "customer_base.html" %}
+
+{% block title %}Products{% endblock %}
+
+{% block content %}
+<h1>Products</h1>
+<p>Here is the list of products...</p>
+
+<div class="container">
+    <div class="card-container">
+        {% for product in products %}
+        <div class="card-wrapper">
+            <div class="card product-card mb-4">
+                <img src="{{ url_for('static', filename='images/' + product[0]) }}" class="card-img-top" alt="Product Image">
+                <div class="card-body">
+                    <h5 class="card-title">{{ product[1] }}</h5>
+                    <p class="card-text"><strong>Brand:</strong> {{ product[2] }}</p>
+                    <p class="card-text"><strong>Category:</strong> {{ product[3] }}</p>
+                    <p class="card-text"><strong>Price:</strong> ${{ product[4] }}</p>
+                    <p class="card-text"><strong>Discount:</strong> {{ product[5] }}%</p>
+
+                    <!-- Buttons -->
+                    <div class="card-buttons">
+                        <button class="btn btn-primary">Desc</button>
+                        <button class="btn btn-success" onclick="addToCart({{ product[6] }})">Add to Cart</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- Add JavaScript -->
+<script>
+function addToCart(productId) {
+    fetch('http://127.0.0.1:5000/add_to_cart', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ product_id: productId })
+    })
+    .then(response => response.json())
+    .then(data => {
+        alert('Product added to cart!');
+    })
+    .catch(error => console.error('Error:', error));
+}
+</script>
+{% endblock %}
