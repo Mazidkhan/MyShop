@@ -13,15 +13,15 @@
             <div class="card product-card mb-4">
                 <img src="{{ url_for('static', filename='images/' + product[0]) }}" class="card-img-top" alt="Product Image">
                 <div class="card-body">
-                    <h5 class="card-title">{{ product[1] }}</h5>
+                    <h3 class="card-title">{{ product[1] }}</h3>
                     <p class="card-text"><strong>Brand:</strong> {{ product[2] }}</p>
                     <p class="card-text"><strong>Category:</strong> {{ product[3] }}</p>
                     <p class="card-text"><strong>Price:</strong> ${{ product[4] }}</p>
                     <p class="card-text"><strong>Discount:</strong> {{ product[5] }}%</p>
-
-                    <!-- Buttons -->
                     <div class="card-buttons">
-                        <button class="btn btn-primary">Desc</button>
+                        <a href="{{ url_for('customer.product_description', product_id=product[6]) }}" style="text-decoration: none; display: flex; justify-content: center; align-items: center; height: 100%;" class="btn btn-primary">
+                            Desc
+                        </a>
                         <button class="btn btn-success" onclick="addToCart({{ product[6] }})">Add to Cart</button>
                     </div>
                 </div>

@@ -177,6 +177,16 @@ def customer_products():
     total_pages = (total_products + per_page - 1) // per_page  # Calculate total pages
     return render_template('/customer/customer_products.html', products=products, page=page, total_pages=total_pages,count=customer_orders_count(),cartcount=get_cart_count())
 
+@customer_bp.route('/products/description/<int:product_id>')
+def product_description(product_id):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute('SELECT * FROM products where id = ?',(product_id,))
+    products = cursor.fetchall()
+
+    return render_template('product_description.html', products=products,count=customer_orders_count(),cartcount=get_cart_count())
+    conn.close()
+
 @customer_bp.route('/carts')
 def carts():
     cart_items = session.get('cart', [])

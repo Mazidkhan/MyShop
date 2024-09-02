@@ -1,0 +1,131 @@
+{% extends "customer/customer_base.html" %}
+
+{% block title %}Products{% endblock %}
+
+{% block content %}
+<style>
+    .product-container {
+        display: flex;
+        align-items: flex-start;
+        margin: 20px;
+    }
+    .product-image {
+        max-width: 250px; /* Size for the main image container */
+        margin-right: 20px;
+        display: flex;
+        flex-direction: column;
+    }
+    .product-image img {
+        width: 100%;
+        height: auto; /* Automatically adjusts height to maintain aspect ratio */
+    }
+    .thumbnail-container {
+        display: flex;
+        margin-top: 10px;
+    }
+    .thumbnail-container img {
+        width: 80px; /* Fixed width for thumbnails */
+        height: 80px; /* Fixed height for thumbnails */
+        margin-right: 10px;
+        cursor: pointer;
+        border: 2px solid transparent;
+        object-fit: cover; /* Maintains aspect ratio without affecting layout */
+    }
+    .thumbnail-container img:hover {
+        border: 2px solid #007bff;
+    }
+    .product-details {
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+        margin-left: 180px; /* Move content to the right */
+    }
+    .product-details h2 {
+        margin-top: 0;
+        font-size: 24px; /* Font size for product name */
+    }
+    .product-details p {
+        margin: 5px 0;
+        font-size: 18px; /* Font size for product details */
+    }
+    .product-details strong {
+        font-weight: bold;
+    }
+    .user-container {
+        margin: 40px 20px 20px; /* Space below product details and around the container */
+    }
+    .user-container h3 {
+        margin-top: 0;
+        margin-bottom: 10px;
+    }
+    .user-container form {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px; /* Adds space between textarea and button */
+    }
+    .user-container textarea {
+        flex-grow: 1;
+        width: 500px; /* Increased width for the textarea */
+        height: 40px; /* Adjusted height for the textarea */
+        padding: 10px;
+        font-size: 16px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        resize: vertical; /* Allows vertical resizing only */
+    }
+    .user-container button {
+        padding: 10px;
+        font-size: 16px;
+        color: #fff;
+        background-color: #007bff;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+    .user-container button:hover {
+        background-color: #0056b3;
+    }
+</style>
+
+{% for product in products %}
+<div class="product-container">
+    <!-- Left side: Product Image -->
+    <div class="product-image">
+        <img id="mainImage{{ product['id'] }}" src="{{ url_for('static', filename='images/' + product['image1']) }}" alt="Product Image">
+        <div class="thumbnail-container">
+            <img src="{{ url_for('static', filename='images/' + product['image1']) }}" alt="Thumbnail 1" onclick="changeImage('{{ url_for('static', filename='images/' + product['image1']) }}', {{ product['id'] }})">
+            <img src="{{ url_for('static', filename='images/' + product['image2']) }}" alt="Thumbnail 2" onclick="changeImage('{{ url_for('static', filename='images/' + product['image2']) }}', {{ product['id'] }})">
+            <img src="{{ url_for('static', filename='images/' + product['image3']) }}" alt="Thumbnail 3" onclick="changeImage('{{ url_for('static', filename='images/' + product['image3']) }}', {{ product['id'] }})">
+        </div>
+    </div>
+
+    <!-- Right side: Product Details -->
+    <div class="product-details">
+        <p><strong>{{ product['product_name'] }}</strong></p>
+        <p><strong>Brand:</strong> {{ product['product_brand'] }}</p>
+        <p><strong>Category:</strong> {{ product['product_category'] }}</p>
+        <p><strong>Price:</strong> ${{ product['price'] }}</p>
+        <p><strong>Discount:</strong> {{ product['discount'] }}%</p>
+        <p><strong>Stock:</strong> {{ product['stock'] }}</p>
+    </div>
+</div>
+{% endfor %}
+
+<!-- User Container -->
+<div class="user-container">
+    <form>
+        <table>
+            <tr>
+                <td><textarea placeholder="Write your review here..."></textarea></td>
+                <td><button type="button">Submit Product Review</button></td>
+            </tr>
+        </table>
+    </form>
+</div>
+
+<script>
+    function changeImage(imageSrc, productId) {
+        document.getElementById('mainImage' + productId).src = imageSrc;
+    }
+</script>
+{% endblock %}
