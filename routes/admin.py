@@ -20,7 +20,7 @@ def secure_filename(filename):
 def in_process_count():
     conn = get_db_connection()
     cursor = conn.cursor()
-    cursor.execute('SELECT count(*) FROM orders WHERE status = ?', ('In Process',))
+    cursor.execute('SELECT count(*) FROM orders WHERE status = ? and owner_name = ?', ('In Process',session['admin_name']))
     count = cursor.fetchone()[0]
     return count
 
