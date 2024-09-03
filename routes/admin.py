@@ -52,11 +52,12 @@ def admin():
         admin_name = request.form['admin_name']
         admin_password = request.form['admin_password']
         conn = get_db_connection()
-        admin = conn.execute('SELECT * FROM admin WHERE admin_name = ? AND admin_password = ?', (admin_name, admin_password)).fetchone()
+        admin = conn.execute('SELECT * FROM merchants WHERE owner_name = ? AND password = ?', (admin_name, admin_password)).fetchone()
         conn.close()
 
         if admin:
-            session['admin_name'] = admin['admin_name']
+            session['admin_shop'] = admin['shop_name']
+            session['admin_name'] = admin['owner_name']
             return render_template('admin/admin_base.html')
         else:
             flash('Invalid username or password!', 'danger')
@@ -65,6 +66,23 @@ def admin():
         return render_template('admin/admin_login.html')
     else:
         return render_template('admin/admin_base.html')
+
+@admin_bp.route('/add_delivery_boy', methods=['POST'])
+def add_delivery_boy():
+    data = request.json
+    boy = data.get('boy')
+    phone = data.get('phone')
+    email = data.get('email')
+    password = data.get('password')
+    conn = get_db_connection()
+    admin=session['admin_name']
+    print(f'Admin:{admin}')
+    cursor = conn.cursor()
+    cursor.execute('INSERT INTO delivery_boys (owner_name, shop_name, delivery_boy, phone, email, password) VALUES (?, ?, ?, ?, ?, ?)',
+                   (session['admin_name'],session['admin_shop'],boy, phone, email, password))
+    conn.commit()
+    conn.close()
+    return jsonify({'status': 'success'})
 
 @admin_bp.route('/update_product', methods=['PUT'])
 def update_product():
@@ -191,17 +209,17 @@ def products():
 
         # Insert data into the database
         cursor.execute('''
-            INSERT INTO products (product_name, product_brand, product_category, price, discount, stock, image1, image2, image3)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+            INSERT INTO products (product_name, product_brand, product_category, price, discount, stock, image1, image2, image3, shop_name, owner_name)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         ''', (product_name, product_brand, product_category, price, discount, stock, image1_filename, image2_filename,
-              image3_filename))
+              image3_filename, session['admin_shop'], session['admin_name']))
 
         conn.commit()
 
         return redirect(url_for('admin.products'))
 
     if 'admin_name' in session:
-        products = conn.execute('SELECT * FROM products').fetchall()
+        products = conn.execute('SELECT * FROM products where owner_name = ?',(session['admin_name'],)).fetchall()
         conn.close()
         return render_template('admin/admin_products.html', products=products, count=in_process_count())
 
@@ -212,7 +230,7 @@ def orders():
     if 'admin_name' in session:
         conn = get_db_connection()
         cursor = conn.cursor()
-        cursor.execute('SELECT * FROM orders')
+        cursor.execute('SELECT * FROM orders where owner_name = ?',(session['admin_name'],))
         orders = cursor.fetchall()
         return render_template('admin/admin_orders.html',orders=orders, count=in_process_count())
     return redirect(url_for('admin.admin'))
@@ -253,13 +271,38 @@ def logout():
     session.pop('admin_name', None)
     return redirect(url_for('admin.admin'))
 
+@admin_bp.route('/register', methods=['POST'])
+def register():
+    owner_name = request.form['owner_name']
+    phone = request.form['phone']
+    address = request.form['address']
+    shop_name = request.form['shop_name']
+    password = request.form['password']
+
+    conn = get_db_connection()
+    conn.execute('INSERT INTO merchants (owner_name, phone, address, shop_name, password) VALUES (?, ?, ?, ?, ?)',
+                 (owner_name, phone, address, shop_name, password))
+    conn.commit()
+    conn.close()
+
+    flash('Registration successful!', 'success')
+    return redirect(url_for('admin.admin'))
+
 @admin_bp.route('/deliveries')
 def deliveries():
     conn = get_db_connection()
     cursor = conn.cursor()
-    cursor.execute('SELECT * FROM delivery_orders WHERE status != "delivered"')
+    cursor.execute('SELECT * FROM delivery_orders WHERE status != "delivered" and delivery_boy in (select delivery_boy from delivery_boys where owner_name=?)',(session['admin_name'],))
     deliveries = cursor.fetchall()
     return render_template('admin/admin_deliveries.html',deliveries=deliveries, count=in_process_count())
+
+@admin_bp.route('/delivery_boys')
+def delivery_boys():
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute('SELECT * FROM delivery_boys where owner_name=?',(session['admin_name'],))
+    delivery_boys = cursor.fetchall()
+    return render_template('admin/admin_delivery_boys.html',delivery_boys=delivery_boys, count=in_process_count())
 
 @admin_bp.route('/get_order_ids', methods=['GET'])
 def get_order_ids():

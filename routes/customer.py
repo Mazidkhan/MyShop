@@ -53,8 +53,8 @@ def submit_cart():
         # Insert all items in the cart with the same cart_id
         for item in cart:
             cursor.execute('''
-                INSERT INTO orders (id, customer_name, product_name, product_brand, product_category, quantity, price, total_price, date, phone, address)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                INSERT INTO orders (id, customer_name, product_name, product_brand, product_category, quantity, price, total_price, date, phone, address, owner_name, shop_name)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             ''', (
                 cart_id,  # Use the same unique cart_id for all items in the cart
                 customer_name,
@@ -66,7 +66,9 @@ def submit_cart():
                 item['quantity'] * item['price'],
                 current_date,
                 customer_phone,
-                customer_address
+                customer_address,
+                item['owner_name'],
+                item['shop_name']
             ))
 
         conn.commit()
@@ -98,14 +100,16 @@ def add_to_cart():
             return jsonify({'message': 'Product quantity updated in cart!'})
 
     session['cart'].append({
-        'product_id': product[0],
-        'product_name': product[1],
-        'product_brand': product[2],
-        'product_category': product[3],
-        'price': product[4],
-        'discount': product[5],
-        'image1': product[7],
-        'quantity': 1
+        'product_id': product['id'],
+        'product_name': product['product_name'],
+        'product_brand': product['product_brand'],
+        'product_category': product['product_category'],
+        'price': product['price'],
+        'discount': product['discount'],
+        'image1': product['image1'],
+        'quantity': 1,
+        'shop_name': product['shop_name'],
+        'owner_name': product['owner_name']
     })
 
     session.modified = True
@@ -168,7 +172,7 @@ def customer_products():
 
     # Fetch products for the current page
     cursor.execute(
-        'SELECT image1, product_name, product_brand, product_category, price, discount, id FROM products LIMIT ? OFFSET ?',
+        'SELECT image1, product_name, product_brand, product_category, price, discount, id, owner_name, shop_name FROM products LIMIT ? OFFSET ?',
         (per_page, offset))
     products = cursor.fetchall()
 
@@ -215,7 +219,6 @@ def carts():
         discount = item['discount']
         total_price = (price * (1 - discount / 100)) * quantity
         grand_total = grand_total + total_price
-
     return render_template('/customer/customer_carts.html', cart_items=cart_items, enumerate=enumerate,grand_total=grand_total,count=customer_orders_count(),cartcount=get_cart_count())
 
 @customer_bp.route('/orders')
@@ -255,5 +258,5 @@ def customer():
                          (username, password, email, phone, address))
             conn.commit()
             conn.close()
-            return render_template('/customer/customer_base.html',count=customer_orders_count())
+            return render_template('/customer/customer_base.html')
     return render_template('/customer/customer_login_register.html')

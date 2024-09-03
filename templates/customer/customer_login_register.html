@@ -32,11 +32,12 @@
             color: white;
             border: none;
             padding: 10px 20px;
-            margin: 10px;
             font-size: 16px;
             cursor: pointer;
             border-radius: 5px;
             transition: background-color 0.3s;
+            width: 90%; /* Consistent button width */
+            margin: 10px;
         }
         button:hover {
             background-color: #0056b3;
@@ -45,18 +46,15 @@
             display: none;
         }
         .popup {
-            position: fixed;
-            left: 50%;
-            top: 50%;
-            transform: translate(-50%, -50%);
+            position: relative;
             padding: 20px;
             background-color: #fff;
             border: 1px solid #ddd;
             border-radius: 8px;
             box-shadow: 0px 0px 10px rgba(0,0,0,0.2);
-            z-index: 2;
             width: 90%;
             max-width: 400px;
+            margin: 50px auto; /* Center the popup */
         }
         .overlay {
             position: fixed;
@@ -66,16 +64,15 @@
             height: 100%;
             background: rgba(0,0,0,0.5);
             z-index: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
         form {
             margin: 0;
             padding: 20px;
             display: flex;
             flex-direction: column;
-        }
-        label {
-            font-weight: bold;
-            margin: 10px 0 5px;
         }
         input[type="text"],
         input[type="password"],
@@ -119,44 +116,39 @@
 <body>
     <div class="container">
         <h1>Customer Login/Register</h1>
-        <button onclick="showForm('loginForm')">Login</button>
-        <button onclick="showForm('registerForm')">Register</button>
 
         <!-- Login Form -->
-        <div id="loginForm" class="hidden">
-            <div class="overlay" onclick="hideForm('loginForm')"></div>
-            <div class="popup">
-                <h2>Login</h2>
-                <form method="post">
-                    <label for="loginUsername">Username:</label>
-                    <input type="text" id="loginUsername" name="username" required>
-                    <label for="loginPassword">Password:</label>
-                    <input type="password" id="loginPassword" name="password" required>
-                    <input type="submit" name="login_submit" value="Login">
-                </form>
-                <button class="close-btn" onclick="hideForm('loginForm')">Close</button>
-            </div>
-        </div>
+        <form method="post">
+            <label for="loginUsername">Username:</label>
+            <input type="text" id="loginUsername" name="username" required>
+            <label for="loginPassword">Password:</label>
+            <input type="password" id="loginPassword" name="password" required>
+            <input type="submit" name="login_submit" value="Login">
+        </form>
+
+        <!-- Register Button -->
+        <button onclick="showForm('registerForm')">Register</button>
 
         <!-- Register Form -->
         <div id="registerForm" class="hidden">
-            <div class="overlay" onclick="hideForm('registerForm')"></div>
-            <div class="popup">
-                <h2>Register</h2>
-                <form method="post">
-                    <label for="registerUsername">Username:</label>
-                    <input type="text" id="registerUsername" name="username" required>
-                    <label for="registerPassword">Password:</label>
-                    <input type="password" id="registerPassword" name="password" required>
-                    <label for="registerEmail">Email:</label>
-                    <input type="email" id="registerEmail" name="email" required>
-                    <label for="registerPhone">Phone:</label>
-                    <input type="text" id="registerPhone" name="phone" required>
-                    <label for="registerAddress">Address:</label>
-                    <input type="text" id="registerAddress" name="address" required>
-                    <input type="submit" name="register_submit" value="Register">
-                </form>
-                <button class="close-btn" onclick="hideForm('registerForm')">Close</button>
+            <div class="overlay" onclick="hideForm(event, 'registerForm')">
+                <div class="popup" onclick="event.stopPropagation()">
+                    <h2>Register</h2>
+                    <form method="post">
+                        <label for="registerUsername">Username:</label>
+                        <input type="text" id="registerUsername" name="username" required>
+                        <label for="registerPassword">Password:</label>
+                        <input type="password" id="registerPassword" name="password" required>
+                        <label for="registerEmail">Email:</label>
+                        <input type="email" id="registerEmail" name="email" required>
+                        <label for="registerPhone">Phone:</label>
+                        <input type="text" id="registerPhone" name="phone" required>
+                        <label for="registerAddress">Address:</label>
+                        <input type="text" id="registerAddress" name="address" required>
+                        <input type="submit" name="register_submit" value="Register">
+                    </form>
+                    <button class="close-btn" onclick="hideForm(event, 'registerForm')">Close</button>
+                </div>
             </div>
         </div>
     </div>
@@ -166,8 +158,10 @@
             document.getElementById(formId).style.display = 'block';
         }
 
-        function hideForm(formId) {
-            document.getElementById(formId).style.display = 'none';
+        function hideForm(event, formId) {
+            if (event.target.classList.contains('overlay')) {
+                document.getElementById(formId).style.display = 'none';
+            }
         }
     </script>
 </body>

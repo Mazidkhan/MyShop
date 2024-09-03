@@ -146,6 +146,8 @@
         <p><strong>Price:</strong> ${{ product['price'] }}</p>
         <p><strong>Discount:</strong> {{ product['discount'] }}%</p>
         <p><strong>Stock:</strong> {{ product['stock'] }}</p>
+        <p><strong>Shop:</strong> {{ product['owner_name'] }}</p>
+        <p><strong>Merchant:</strong> {{ product['shop_name'] }}</p>
     </div>
 </div>
 {% endfor %}
