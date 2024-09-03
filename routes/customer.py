@@ -177,14 +177,32 @@ def customer_products():
     total_pages = (total_products + per_page - 1) // per_page  # Calculate total pages
     return render_template('/customer/customer_products.html', products=products, page=page, total_pages=total_pages,count=customer_orders_count(),cartcount=get_cart_count())
 
+@customer_bp.route('/submit_review/<int:product_id>/<string:name>/<string:brand>', methods=['POST'])
+def submit_review(product_id,name,brand):
+    review = request.form['review']
+    customer_name = session['customer_name']
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    cursor.execute(
+        "INSERT INTO product_reviews (id, product_name, product_brand, customer_name, review) VALUES (?, ?, ?, ?, ?)",
+        (product_id, name, brand, customer_name, review)
+    )
+    conn.commit()
+    conn.close()
+
+    return redirect(url_for('customer.product_description', product_id=product_id))
+
+
 @customer_bp.route('/products/description/<int:product_id>')
 def product_description(product_id):
     conn = get_db_connection()
     cursor = conn.cursor()
     cursor.execute('SELECT * FROM products where id = ?',(product_id,))
     products = cursor.fetchall()
-
-    return render_template('product_description.html', products=products,count=customer_orders_count(),cartcount=get_cart_count())
+    cursor.execute('SELECT * FROM product_reviews where id = ?',(product_id,))
+    reviews = cursor.fetchall()
+    return render_template('product_description.html', products=products,count=customer_orders_count(),cartcount=get_cart_count(),reviews=reviews)
     conn.close()
 
 @customer_bp.route('/carts')

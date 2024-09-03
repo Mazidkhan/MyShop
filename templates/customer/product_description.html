@@ -51,12 +51,15 @@
     .product-details strong {
         font-weight: bold;
     }
+    .reviews-container .review-item p {
+        margin: 5px 0;
+        font-size: 16px;
+    }
     .user-container {
-        margin: 40px 20px 20px; /* Space below product details and around the container */
+        margin: 40px 20px 20px; /* Space below reviews and around the container */
     }
     .user-container h3 {
         margin-top: 0;
-        margin-bottom: 10px;
     }
     .user-container form {
         display: flex;
@@ -66,7 +69,7 @@
     .user-container textarea {
         flex-grow: 1;
         width: 500px; /* Increased width for the textarea */
-        height: 40px; /* Adjusted height for the textarea */
+        height: 18px; /* Adjusted height for the textarea */
         padding: 10px;
         font-size: 16px;
         border: 1px solid #ccc;
@@ -85,6 +88,43 @@
     .user-container button:hover {
         background-color: #0056b3;
     }
+    .reviews-container {
+        margin: 40px 20px 20px;
+        padding-top: 20px;
+    }
+    .reviews-container h3 {
+        margin-bottom: 20px;
+    }
+    .review-item {
+        display: flex;
+        align-items: flex-start;
+        margin-bottom: 15px;
+        border-bottom: 1px solid #ccc;
+        padding-bottom: 10px;
+        font-size: 16px;
+        font-family: Arial, sans-serif;
+    }
+    .review-item p {
+        margin: 0;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 10px; /* Space between name and review */
+        flex-wrap: wrap;
+        word-wrap: break-word;
+    }
+    .review-item strong {
+        margin-right: 5px;
+        color: #333;
+    }
+    .reviews-container {
+        max-height: 250px; /* Set the desired height for the reviews container */
+        overflow-y: auto; /* Enable vertical scrolling */
+        border: 1px solid #ccc; /* Optional: Add a border to the container */
+        padding: 10px; /* Optional: Add padding inside the container */
+        margin-top: 60px; /* Optional: Add margin below the container */
+    }
+
 </style>
 
 {% for product in products %}
@@ -99,7 +139,6 @@
         </div>
     </div>
 
-    <!-- Right side: Product Details -->
     <div class="product-details">
         <p><strong>{{ product['product_name'] }}</strong></p>
         <p><strong>Brand:</strong> {{ product['product_brand'] }}</p>
@@ -110,19 +149,24 @@
     </div>
 </div>
 {% endfor %}
-
-<!-- User Container -->
-<div class="user-container">
-    <form>
-        <table>
-            <tr>
-                <td><textarea placeholder="Write your review here..."></textarea></td>
-                <td><button type="button">Submit Product Review</button></td>
-            </tr>
-        </table>
-    </form>
+<div class="reviews-container">
+    <h3>Customer Reviews</h3>
+    {% for review in reviews %}
+    <div class="review-item">
+        <div class="review-content">
+            <p class="customer-name"><strong>{{review['customer_name']}}</strong>{{review['review']}}</p>
+        </div>
+    </div>
+    {% endfor %}
 </div>
-
+<div class="user-container">
+    {% for product in products %}
+    <form method="post" action="{{ url_for('customer.submit_review', product_id=product['id'], name=product['product_name'], brand=product['product_brand']) }}">
+        <textarea name="review" placeholder="Write your review here..." required></textarea>
+        <button type="submit">Submit</button>
+    </form>
+    {% endfor %}
+</div>
 <script>
     function changeImage(imageSrc, productId) {
         document.getElementById('mainImage' + productId).src = imageSrc;

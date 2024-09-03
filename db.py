@@ -83,6 +83,15 @@ def create_tables():
             image3 TEXT
         )
     ''')
+    cursor.execute('''
+    CREATE TABLE IF NOT EXISTS product_reviews (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        product_name TEXT NOT NULL,
+        product_brand TEXT NOT NULL,
+        customer_name TEXT NOT NULL,
+        review TEXT
+    )
+    ''')
 
     # Commit changes and close the connection
     conn.commit()
