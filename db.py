@@ -33,8 +33,10 @@ def create_tables():
             delivery_boy TEXT NOT NULL,
             phone TEXT NOT NULL,
             email TEXT NOT NULL,
-            password TEXT NOT NULL
-        )
+            password TEXT NOT NULL,
+            owner_name TEXT NOT NULL,
+            shop_name TEXT NOT NULL,        
+            )
     ''')
 
     # Create 'delivery_orders' table
@@ -64,7 +66,9 @@ def create_tables():
             date TEXT NOT NULL,
             status TEXT NOT NULL,
             phone TEXT NOT NULL,
-            address TEXT NOT NULL
+            address TEXT NOT NULL,
+            owner_name TEXT NOT NULL,
+            shop_name TEXT NOT NULL,
         )
     ''')
 
@@ -80,7 +84,9 @@ def create_tables():
             stock INTEGER NOT NULL,
             image1 TEXT,
             image2 TEXT,
-            image3 TEXT
+            image3 TEXT,
+            shop_name TEXT,
+            owner_name TEXT
         )
     ''')
     cursor.execute('''
@@ -92,7 +98,16 @@ def create_tables():
         review TEXT
     )
     ''')
-
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS merchants (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            owner_name TEXT NOT NULL,
+            phone TEXT NOT NULL,
+            address TEXT NOT NULL,
+            shop_name TEXT,
+            password TEXT
+        )
+        ''')
     # Commit changes and close the connection
     conn.commit()
     conn.close()
