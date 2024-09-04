@@ -151,7 +151,6 @@ def customer_delivery():
     deliveries = cursor.fetchall()
     cursor.execute('SELECT * FROM delivery_boys WHERE delivery_boy = ?', (deliveries[0][2],))
     delivery_boy = cursor.fetchall()
-    print(f'Delivery:{delivery_boy}')
     return render_template('/customer/customer_deliveries.html', deliveries=deliveries,delivery_boy=delivery_boy,cartcount=get_cart_count(),count=customer_orders_count())
 
 @customer_bp.route('/logout')

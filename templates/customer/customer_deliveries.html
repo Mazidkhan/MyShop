@@ -22,8 +22,8 @@
             <tr>
                 <td>{{ delivery['order_id'] }}</td>
                 <td>{{ delivery['delivery_boy'] }}</td>
-                <td>{{ delivery_boy['phone'] }}</td>
-                <td>{{ delivery_boy['email'] }}</td>
+                <td>{{ delivery_boy[0]['phone'] }}</td>
+                <td>{{ delivery_boy[0]['email'] }}</td>
                 <td>{{ delivery['status'] }}</td>
             </tr>
             {% endfor %}
