@@ -8,28 +8,34 @@
         display: flex;
         align-items: flex-start;
         margin: 20px;
+        padding: 20px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     }
     .product-image {
-        max-width: 250px; /* Size for the main image container */
+        max-width: 250px;
         margin-right: 20px;
         display: flex;
         flex-direction: column;
     }
     .product-image img {
         width: 100%;
-        height: auto; /* Automatically adjusts height to maintain aspect ratio */
+        height: auto;
+        border-radius: 8px;
     }
     .thumbnail-container {
         display: flex;
         margin-top: 10px;
     }
     .thumbnail-container img {
-        width: 80px; /* Fixed width for thumbnails */
-        height: 80px; /* Fixed height for thumbnails */
+        width: 80px;
+        height: 80px;
         margin-right: 10px;
         cursor: pointer;
         border: 2px solid transparent;
-        object-fit: cover; /* Maintains aspect ratio without affecting layout */
+        border-radius: 4px;
+        object-fit: cover;
     }
     .thumbnail-container img:hover {
         border: 2px solid #007bff;
@@ -38,25 +44,18 @@
         flex-grow: 1;
         display: flex;
         flex-direction: column;
-        margin-left: 180px; /* Move content to the right */
-    }
-    .product-details h2 {
-        margin-top: 0;
-        font-size: 24px; /* Font size for product name */
+        margin-left: 70%;
     }
     .product-details p {
         margin: 5px 0;
-        font-size: 18px; /* Font size for product details */
+        font-size: 18px;
+        color: #333;
     }
     .product-details strong {
         font-weight: bold;
     }
-    .reviews-container .review-item p {
-        margin: 5px 0;
-        font-size: 16px;
-    }
     .user-container {
-        margin: 40px 20px 20px; /* Space below reviews and around the container */
+        margin: 40px 20px 20px; /* Space around the container */
     }
     .user-container h3 {
         margin-top: 0;
@@ -64,67 +63,40 @@
     .user-container form {
         display: flex;
         align-items: flex-start;
-        gap: 10px; /* Adds space between textarea and button */
-    }
-    .user-container textarea {
-        flex-grow: 1;
-        width: 500px; /* Increased width for the textarea */
-        height: 18px; /* Adjusted height for the textarea */
-        padding: 10px;
-        font-size: 16px;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-        resize: vertical; /* Allows vertical resizing only */
-    }
-    .user-container button {
-        padding: 10px;
-        font-size: 16px;
-        color: #fff;
-        background-color: #007bff;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
     }
     .user-container button:hover {
         background-color: #0056b3;
     }
     .reviews-container {
-        margin: 40px 20px 20px;
+        margin: 40px 20px;
         padding-top: 20px;
+        max-height: 250px;
+        overflow-y: auto;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        padding: 20px;
     }
     .reviews-container h3 {
         margin-bottom: 20px;
+        font-size: 22px;
+        color: #555;
     }
     .review-item {
         display: flex;
         align-items: flex-start;
         margin-bottom: 15px;
-        border-bottom: 1px solid #ccc;
+        border-bottom: 1px solid #ddd;
         padding-bottom: 10px;
-        font-size: 16px;
-        font-family: Arial, sans-serif;
     }
     .review-item p {
         margin: 0;
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-        gap: 10px; /* Space between name and review */
-        flex-wrap: wrap;
-        word-wrap: break-word;
+        font-size: 16px;
+        color: #333;
     }
     .review-item strong {
         margin-right: 5px;
-        color: #333;
+        color: #007bff;
     }
-    .reviews-container {
-        max-height: 250px; /* Set the desired height for the reviews container */
-        overflow-y: auto; /* Enable vertical scrolling */
-        border: 1px solid #ccc; /* Optional: Add a border to the container */
-        padding: 10px; /* Optional: Add padding inside the container */
-        margin-top: 60px; /* Optional: Add margin below the container */
-    }
-
 </style>
 
 {% for product in products %}
@@ -151,24 +123,31 @@
     </div>
 </div>
 {% endfor %}
+
 <div class="reviews-container">
     <h3>Customer Reviews</h3>
     {% for review in reviews %}
     <div class="review-item">
-        <div class="review-content">
-            <p class="customer-name"><strong>{{review['customer_name']}}</strong>{{review['review']}}</p>
-        </div>
+        <p><strong>{{ review['customer_name'] }}:</strong> {{ review['review'] }}</p>
     </div>
     {% endfor %}
 </div>
+
 <div class="user-container">
     {% for product in products %}
-    <form method="post" action="{{ url_for('customer.submit_review', product_id=product['id'], name=product['product_name'], brand=product['product_brand']) }}">
-        <textarea name="review" placeholder="Write your review here..." required></textarea>
-        <button type="submit">Submit</button>
+    <form method="post" action="{{ url_for('customer.submit_review', product_id=product['id'], name=product['product_name'], brand=product['product_brand']) }}" style="display: flex; align-items: flex-start; gap: 10px;">
+        <table>
+            <tr>
+                <td>
+                    <input type="text" name="review" placeholder="Write your review here..." required style="flex-grow: 1; width: 93%; height: 50px; padding: 10px; font-size: 16px; border: 1px solid #ccc; border-radius: 4px; resize: vertical;"></input>
+                    <button type="submit" style="padding: 10px; font-size: 16px; height: 50px; color: #fff; background-color: #007bff; border: none; border-radius: 4px; cursor: pointer; align-self: flex-start;">Submit</button>
+                </td>
+            </tr>
+        </table>
     </form>
     {% endfor %}
 </div>
+
 <script>
     function changeImage(imageSrc, productId) {
         document.getElementById('mainImage' + productId).src = imageSrc;

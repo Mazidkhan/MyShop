@@ -130,10 +130,19 @@ document.addEventListener('DOMContentLoaded', function() {
         popupForm.style.display = 'none';
     });
 
+    // Close edit form popup
+    var closeEditFormButton = document.getElementById('closeEditFormButton');
+    var editFormPopup = document.getElementById('editFormPopup');
+
+    closeEditFormButton.addEventListener('click', function() {
+        editFormPopup.style.display = 'none';
+    });
 
     window.addEventListener('click', function(event) {
         if (event.target == popupForm) {
             popupForm.style.display = 'none';
+        } else if (event.target == editFormPopup) {
+            editFormPopup.style.display = 'none';
         }
     });
 
@@ -156,7 +165,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     document.getElementById('editProductDiscount').value = data.discount;
                     document.getElementById('editProductStock').value = data.stock;
                     // Pre-fill images if needed (optional, depending on how you handle images)
-                    document.getElementById('editFormPopup').style.display = 'flex';
+                    editFormPopup.style.display = 'flex';
                 });
         });
     });
