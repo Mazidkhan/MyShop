@@ -276,17 +276,19 @@ def register():
     owner_name = request.form['owner_name']
     phone = request.form['phone']
     address = request.form['address']
+    city = request.form['city']
+    location = request.form['location']
     shop_name = request.form['shop_name']
     password = request.form['password']
 
     conn = get_db_connection()
-    conn.execute('INSERT INTO merchants (owner_name, phone, address, shop_name, password) VALUES (?, ?, ?, ?, ?)',
-                 (owner_name, phone, address, shop_name, password))
+    conn.execute('INSERT INTO merchants (owner_name, phone, address, city, location, shop_name, password) VALUES (?, ?, ?, ?, ?, ?, ?)',
+                 (owner_name, phone, address, city, location, shop_name, password))
     conn.commit()
     conn.close()
-
-    flash('Registration successful!', 'success')
-    return redirect(url_for('admin.admin'))
+    session['admin_shop'] = shop_name
+    session['admin_name'] = owner_name
+    return render_template('admin/admin_base.html')
 
 def delivery_orders_count():
     conn = get_db_connection()

@@ -158,29 +158,63 @@ def customer_logout():
     session.pop('customer_name', None)
     return redirect(url_for('customer.customer'))
 
+
 @customer_bp.route('/products')
 def customer_products():
     page = int(request.args.get('page', 1))
     per_page = 12  # Number of products per page
     offset = (page - 1) * per_page
+    search = request.args.get('search', '')
+    selected_location = request.args.get('location', '')
 
     conn = get_db_connection()
     cursor = conn.cursor()
 
-    # Get total number of products
-    cursor.execute('SELECT COUNT(*) FROM products')
+    # Build the query with optional filters, joining with the merchants table for location
+    query = '''
+        SELECT p.image1, p.product_name, p.product_brand, p.product_category, p.price, p.discount, p.id, p.shop_name, p.owner_name
+        FROM products p
+        JOIN merchants m ON p.shop_name = m.shop_name AND p.owner_name = m.owner_name
+        WHERE 1=1
+    '''
+    params = []
+
+    if search:
+        query += ' AND (p.product_name LIKE ? OR p.product_brand LIKE ? OR p.product_category LIKE ?)'
+        params.extend([f'%{search}%', f'%{search}%', f'%{search}%'])
+
+    if selected_location:
+        query += ' AND m.location = ?'
+        params.append(selected_location)
+
+    # Get total number of filtered products
+    cursor.execute(f'SELECT COUNT(*) FROM ({query})', params)
     total_products = cursor.fetchone()[0]
 
     # Fetch products for the current page
-    cursor.execute(
-        'SELECT image1, product_name, product_brand, product_category, price, discount, id, owner_name, shop_name FROM products LIMIT ? OFFSET ?',
-        (per_page, offset,))
+    query += ' LIMIT ? OFFSET ?'
+    params.extend([per_page, offset])
+    cursor.execute(query, params)
     products = cursor.fetchall()
+
+    # Fetch distinct locations from merchants for the dropdown
+    cursor.execute('SELECT DISTINCT location FROM merchants')
+    locations = cursor.fetchall()
 
     conn.close()
 
     total_pages = (total_products + per_page - 1) // per_page  # Calculate total pages
-    return render_template('customer/customer_products.html', products=products, page=page, total_pages=total_pages, count=customer_orders_count(), cartcount=get_cart_count())
+    return render_template(
+        'customer/customer_products.html',
+        products=products,
+        page=page,
+        total_pages=total_pages,
+        locations=[loc[0] for loc in locations],
+        selected_location=selected_location,
+        count=customer_orders_count(),
+        cartcount=get_cart_count()
+    )
+
 
 @customer_bp.route('/submit_review/<int:product_id>/<string:name>/<string:brand>', methods=['POST'])
 def submit_review(product_id,name,brand):

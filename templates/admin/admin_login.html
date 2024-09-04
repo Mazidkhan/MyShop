@@ -1,97 +1,70 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns="http://www.w3.org/1999/html">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Login</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
-    <style>
-        .button-container {
-            margin-top: 20px; /* Space between buttons */
-        }
-        #loginButton {
-            background-color: #4CAF50; /* Green background for Login */
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            text-align: center;
-            text-decoration: none;
-            display: inline-block;
-            font-size: 16px;
-            margin-right: 10px; /* Space between buttons */
-            cursor: pointer;
-        }
-        #registerButton {
-            background-color: #f44336; /* Red background for Register */
-            color: white;
-            margin-top: 2%;
-            width: 100%;
-            border: none;
-            padding: 10px 20px;
-            text-align: center;
-            text-decoration: none;
-            display: inline-block;
-            font-size: 16px;
-            cursor: pointer;
-        }
+<style>
+    /* Popup form styles */
+    .popup {
+        display: none; /* Hidden by default */
+        position: fixed; /* Stay in place */
+        z-index: 1; /* Sit on top */
+        left: 0;
+        top: 0;
+        width: 100%; /* Full width */
+        height: 100%; /* Full height */
+        overflow: auto; /* Enable scroll if needed */
+        background-color: rgba(0, 0, 0, 0.4); /* Black w/ opacity */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
 
-        /* Popup form styles */
-        .popup {
-            display: none; /* Hidden by default */
-            position: fixed; /* Stay in place */
-            z-index: 1; /* Sit on top */
-            left: 0;
-            top: 0;
-            width: 100%; /* Full width */
-            height: 100%; /* Full height */
-            overflow: auto; /* Enable scroll if needed */
-            background-color: rgb(0,0,0); /* Fallback color */
-            background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
+    .popup-content {
+        background-color: #fefefe;
+        padding: 10px; /* Reduced padding */
+        border: 1px solid #888;
+        width: 50%; /* Reduced width */
+        max-width: 400px; /* Optional: limit the maximum width */
+        max-height: 80%; /* Limit the height to 80% of the viewport */
+        overflow-y: auto; /* Add vertical scroll if content exceeds max-height */
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        border-radius: 8px; /* Optional: rounded corners */
+    }
 
-        .popup-content {
-            background-color: #fefefe;
-            padding: 20px;
-            border: 1px solid #888;
-            width: 80%; /* Could be more or less, depending on screen size */
-            max-width: 600px; /* Optional: limit the maximum width */
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            border-radius: 8px; /* Optional: rounded corners */
-        }
+    .close {
+        color: #aaa;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+        cursor: pointer;
+    }
 
-        .close {
-            color: #aaa;
-            float: right;
-            font-size: 28px;
-            font-weight: bold;
-            cursor: pointer;
-        }
+    .close:hover,
+    .close:focus {
+        color: black;
+        text-decoration: none;
+    }
 
-        .close:hover,
-        .close:focus {
-            color: black;
-            text-decoration: none;
-        }
+    .form-group {
+        margin-bottom: 10px; /* Reduced margin between form groups */
+    }
 
-        .form-group {
-            margin-bottom: 15px;
-        }
+    .form-group label {
+        display: block;
+        margin-bottom: 3px; /* Reduced margin below labels */
+    }
 
-        .form-group label {
-            display: block;
-            margin-bottom: 5px;
-        }
+    .form-group input {
+        width: 100%;
+        padding: 6px; /* Reduced padding inside input fields */
+        border: 1px solid #ddd;
+        border-radius: 4px;
+    }
+</style>
 
-        .form-group input {
-            width: 100%;
-            padding: 8px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-        }
-    </style>
 </head>
 <body>
     <div class="login-container">
@@ -106,7 +79,7 @@
                 <input type="password" id="admin_password" name="admin_password" required>
             </div>
             <div class="button-container">
-                <button id="loginButton" type="submit">Login</button>
+                <input type="submit" value="Login" style="background-color: #007bff;color: white;border: none;padding: 10px 20px;border-radius: 5px;font-size: 16px;cursor: pointer;transition: background-color 0.3s ease;">
                 <button id="registerButton" type="button" onclick="showPopup()">Register</button>
             </div>
         </form>
@@ -121,8 +94,6 @@
         {% endwith %}
     </div>
 
-    <!-- The Popup Form -->
-    <!-- The Popup Form -->
     <div id="registerPopup" class="popup">
         <div class="popup-content">
             <span class="close" onclick="closePopup()">&times;</span>
@@ -139,6 +110,14 @@
                 <div class="form-group">
                     <label for="address">Address:</label>
                     <input type="text" id="address" name="address" required>
+                </div>
+                <div class="form-group">
+                    <label for="city">City:</label>
+                    <input type="text" id="city" name="city" required>
+                </div>
+                <div class="form-group">
+                    <label for="location">Location:</label>
+                    <input type="text" id="location" name="location" required>
                 </div>
                 <div class="form-group">
                     <label for="shop_name">Shop Name:</label>
