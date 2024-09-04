@@ -31,6 +31,17 @@
     </div>
 </div>
 
+<!-- Pagination Controls -->
+<div class="pagination">
+    {% if page > 1 %}
+    <a href="{{ url_for('customer.customer_products', page=page-1) }}" class="btn btn-secondary">Previous</a>
+    {% endif %}
+
+    {% if page < total_pages %}
+    <a href="{{ url_for('customer.customer_products', page=page+1) }}" class="btn btn-secondary">Next</a>
+    {% endif %}
+</div>
+
 <!-- Add JavaScript -->
 <script>
 function addToCart(productId) {

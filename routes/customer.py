@@ -162,11 +162,12 @@ def customer_logout():
 @customer_bp.route('/products')
 def customer_products():
     page = int(request.args.get('page', 1))
-    per_page = 9  # Number of products per page
+    per_page = 12  # Number of products per page
     offset = (page - 1) * per_page
 
     conn = get_db_connection()
     cursor = conn.cursor()
+
     # Get total number of products
     cursor.execute('SELECT COUNT(*) FROM products')
     total_products = cursor.fetchone()[0]
@@ -174,13 +175,13 @@ def customer_products():
     # Fetch products for the current page
     cursor.execute(
         'SELECT image1, product_name, product_brand, product_category, price, discount, id, owner_name, shop_name FROM products LIMIT ? OFFSET ?',
-        (per_page, offset))
+        (per_page, offset,))
     products = cursor.fetchall()
 
     conn.close()
 
     total_pages = (total_products + per_page - 1) // per_page  # Calculate total pages
-    return render_template('/customer/customer_products.html', products=products, page=page, total_pages=total_pages,count=customer_orders_count(),cartcount=get_cart_count())
+    return render_template('customer/customer_products.html', products=products, page=page, total_pages=total_pages, count=customer_orders_count(), cartcount=get_cart_count())
 
 @customer_bp.route('/submit_review/<int:product_id>/<string:name>/<string:brand>', methods=['POST'])
 def submit_review(product_id,name,brand):
