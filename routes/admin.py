@@ -271,6 +271,16 @@ def logout():
     session.pop('admin_name', None)
     return redirect(url_for('admin.admin'))
 
+@admin_bp.route('/profile')
+def profile():
+    if 'admin_name' in session:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute('SELECT * FROM merchants where owner_name=?',(session['admin_name'],))
+        admin = cursor.fetchall()
+
+    return render_template('admin/admin_profile.html',admin=admin,count=in_process_count())
+
 @admin_bp.route('/register', methods=['POST'])
 def register():
     owner_name = request.form['owner_name']

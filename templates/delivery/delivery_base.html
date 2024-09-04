@@ -11,6 +11,7 @@
         <div class="sidebar">
             <h3>Menu</h3>
             <ul>
+                <li><a href="{{ url_for('delivery.delivery_profile') }}">Profile</a></li>
                 <li><a href="{{ url_for('delivery.delivery_current_queue') }}">Current Deliveries {{count}}</a></li>
                 <li><a href="{{ url_for('delivery.delivery_queue') }}">History</a></li>
                 <li><a  style="background:red" href="{{ url_for('delivery.delivery_logout') }}">Logout</a></li>

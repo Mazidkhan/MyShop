@@ -5,13 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Customer Dashboard{% endblock %}</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/customerstyles.css') }}">
-
 </head>
 <body>
     <div class="container">
         <div class="sidebar">
             <h3>Menu</h3>
             <ul>
+                <li><a href="{{ url_for('customer.customer_profile') }}">Profile</a></li>
                 <li><a href="{{ url_for('customer.customer_products') }}">Products</a></li>
                 <li><a href="{{ url_for('customer.carts') }}">Carts {{ cartcount }}</a></li>
                 <li><a href="{{ url_for('customer.customer_orders') }}">Orders {{ count }}</a></li>

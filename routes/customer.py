@@ -215,6 +215,14 @@ def customer_products():
         cartcount=get_cart_count()
     )
 
+@customer_bp.route('/profile')
+def customer_profile():
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute('select * from customer where customer_name=?',(session['customer_name'],))
+    customer=cursor.fetchall()
+
+    return render_template('/customer/customer_profile.html',customer=customer,count=customer_orders_count(),cartcount=get_cart_count())
 
 @customer_bp.route('/submit_review/<int:product_id>/<string:name>/<string:brand>', methods=['POST'])
 def submit_review(product_id,name,brand):

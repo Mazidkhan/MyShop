@@ -1,0 +1,42 @@
+{% extends "customer/customer_base.html" %}
+
+{% block title %}Products{% endblock %}
+
+{% block content %}
+<style>
+    .profile-container {
+        max-width: 800px;
+        margin: auto;
+        padding: 20px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        background-color: #f9f9f9;
+    }
+    .profile-container h1 {
+        text-align: center;
+        color: #333;
+    }
+    .profile-item {
+        margin-bottom: 15px;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        background-color: #fff;
+    }
+    .profile-item label {
+        font-weight: bold;
+    }
+</style>
+
+<div class="profile-container">
+    <h1>Profile</h1>
+    {% for customer in customer %}
+    <div class="profile-item">
+        <p><label>Name:</label> {{ customer['customer_name'] }}</p>
+        <p><label>Email:</label> {{ customer['email'] }}</p>
+        <p><label>Phone:</label> {{ customer['phone'] }}</p>
+        <p><label>Address:</label> {{ customer['address'] }}</p>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

@@ -28,6 +28,15 @@ def update_order_status(order_id):
     update_status_in_table('delivery_orders', order_id, new_status)
     return jsonify({"message": "Order status updated successfully!"}), 200
 
+@delivery_bp.route('/profile')
+def delivery_profile():
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute('SELECT * FROM delivery_boys where delivery_boy = ?',(session['delivery_name'],))
+    delivery_boy = cursor.fetchall()
+
+    return render_template('/delivery/delivery_profile.html',delivery_boy=delivery_boy, count=curret_delivery_count())
+
 @delivery_bp.route('/', methods=['GET', 'POST'])
 def delivery():
     if request.method == 'POST':

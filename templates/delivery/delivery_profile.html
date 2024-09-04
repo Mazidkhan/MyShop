@@ -1,0 +1,43 @@
+{% extends "delivery/delivery_base.html" %}
+
+{% block title %}Products{% endblock %}
+
+{% block content %}
+<style>
+    .profile-container {
+        max-width: 800px;
+        margin: auto;
+        padding: 20px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        background-color: #f9f9f9;
+    }
+    .profile-container h1 {
+        text-align: center;
+        color: #333;
+    }
+    .profile-item {
+        margin-bottom: 15px;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        background-color: #fff;
+    }
+    .profile-item label {
+        font-weight: bold;
+    }
+</style>
+
+<div class="profile-container">
+    <h1>Profile</h1>
+    {% for delivery in delivery_boy %}
+    <div class="profile-item">
+        <p><label>Name:</label> {{ delivery['delivery_boy'] }}</p>
+        <p><label>Email:</label> {{ delivery['email'] }}</p>
+        <p><label>Phone:</label> {{ delivery['phone'] }}</p>
+        <p><label>Shop:</label> {{ delivery['shop_name'] }}</p>
+        <p><label>Merchant:</label> {{ delivery['owner_name'] }}</p>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}
