@@ -20,7 +20,7 @@ def secure_filename(filename):
 def in_process_count():
     conn = get_db_connection()
     cursor = conn.cursor()
-    cursor.execute('SELECT count(*) FROM orders WHERE status = ? and owner_name = ?', ('In Process',session['admin_name']))
+    cursor.execute('SELECT count(*) FROM orders WHERE status = ? and owner_name = ?', ('Received',session['admin_name']))
     count = cursor.fetchone()[0]
     return count
 
@@ -221,7 +221,7 @@ def products():
     if 'admin_name' in session:
         products = conn.execute('SELECT * FROM products where owner_name = ?',(session['admin_name'],)).fetchall()
         conn.close()
-        return render_template('admin/admin_products.html', products=products, count=in_process_count())
+        return render_template('admin/admin_products.html', products=products, count=in_process_count(), delivery_orders_count=delivery_orders_count())
 
     return redirect(url_for('admin.admin'))
 
@@ -232,7 +232,7 @@ def orders():
         cursor = conn.cursor()
         cursor.execute('SELECT * FROM orders where owner_name = ?',(session['admin_name'],))
         orders = cursor.fetchall()
-        return render_template('admin/admin_orders.html',orders=orders, count=in_process_count())
+        return render_template('admin/admin_orders.html',orders=orders, count=in_process_count(), delivery_orders_count=delivery_orders_count())
     return redirect(url_for('admin.admin'))
 
 
@@ -288,13 +288,22 @@ def register():
     flash('Registration successful!', 'success')
     return redirect(url_for('admin.admin'))
 
+def delivery_orders_count():
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute('SELECT count(*) FROM delivery_orders WHERE status != "delivered" and delivery_boy in (select delivery_boy from delivery_boys where owner_name=?)',(session['admin_name'],))
+    count = cursor.fetchone()[0]
+    conn.close()
+
+    return count
+
 @admin_bp.route('/deliveries')
 def deliveries():
     conn = get_db_connection()
     cursor = conn.cursor()
     cursor.execute('SELECT * FROM delivery_orders WHERE status != "delivered" and delivery_boy in (select delivery_boy from delivery_boys where owner_name=?)',(session['admin_name'],))
     deliveries = cursor.fetchall()
-    return render_template('admin/admin_deliveries.html',deliveries=deliveries, count=in_process_count())
+    return render_template('admin/admin_deliveries.html',deliveries=deliveries, count=in_process_count(), delivery_orders_count=delivery_orders_count())
 
 @admin_bp.route('/delivery_boys')
 def delivery_boys():
@@ -302,7 +311,7 @@ def delivery_boys():
     cursor = conn.cursor()
     cursor.execute('SELECT * FROM delivery_boys where owner_name=?',(session['admin_name'],))
     delivery_boys = cursor.fetchall()
-    return render_template('admin/admin_delivery_boys.html',delivery_boys=delivery_boys, count=in_process_count())
+    return render_template('admin/admin_delivery_boys.html',delivery_boys=delivery_boys, count=in_process_count(), delivery_orders_count=delivery_orders_count())
 
 @admin_bp.route('/get_order_ids', methods=['GET'])
 def get_order_ids():

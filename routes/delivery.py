@@ -1,3 +1,5 @@
+from itertools import count
+
 from flask import Blueprint, render_template, request, session, url_for, redirect, jsonify, flash
 import sqlite3
 
@@ -53,7 +55,16 @@ def delivery_queue():
     cursor = conn.cursor()
     cursor.execute('SELECT * FROM delivery_orders where delivery_boy = ?',(session['delivery_name'],))
     deliveries = cursor.fetchall()
-    return render_template('delivery_queues.html', deliveries=deliveries)
+    return render_template('delivery_queues.html', deliveries=deliveries, count=curret_delivery_count())
+
+def curret_delivery_count():
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute('SELECT count(*) FROM delivery_orders WHERE delivery_boy = ? AND status != ?',
+                   (session['delivery_name'], 'delivered'))
+    count = cursor.fetchone()[0]
+    conn.close()
+    return count
 
 @delivery_bp.route('/current_queues')
 def delivery_current_queue():
@@ -61,7 +72,7 @@ def delivery_current_queue():
     cursor = conn.cursor()
     cursor.execute('SELECT * FROM delivery_orders WHERE delivery_boy = ? AND status != ?',(session['delivery_name'], 'delivered'))
     deliveries = cursor.fetchall()
-    return render_template('delivery_current_queues.html', deliveries=deliveries)
+    return render_template('delivery_current_queues.html', deliveries=deliveries, count=curret_delivery_count())
 
 @delivery_bp.route('/get-order-details/<order_id>', methods=['GET'])
 def get_order_details(order_id):

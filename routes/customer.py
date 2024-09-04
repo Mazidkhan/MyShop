@@ -147,10 +147,11 @@ def delete_from_cart(index):
 def customer_delivery():
     conn = get_db_connection()
     cursor = conn.cursor()
-    cursor.execute('SELECT * FROM delivery_orders WHERE customer_name = ?', (session['customer_name'],))
+    cursor.execute('SELECT * FROM delivery_orders WHERE customer_name = ? AND status != ?', (session['customer_name'], 'delivered'))
     deliveries = cursor.fetchall()
     cursor.execute('SELECT * FROM delivery_boys WHERE delivery_boy = ?', (deliveries[0][2],))
     delivery_boy = cursor.fetchall()
+    print(f'Delivery:{delivery_boy}')
     return render_template('/customer/customer_deliveries.html', deliveries=deliveries,delivery_boy=delivery_boy,cartcount=get_cart_count(),count=customer_orders_count())
 
 @customer_bp.route('/logout')
@@ -161,7 +162,7 @@ def customer_logout():
 @customer_bp.route('/products')
 def customer_products():
     page = int(request.args.get('page', 1))
-    per_page = 6  # Number of products per page
+    per_page = 9  # Number of products per page
     offset = (page - 1) * per_page
 
     conn = get_db_connection()
@@ -225,7 +226,8 @@ def carts():
 def customer_orders():
     conn = get_db_connection()
     cursor = conn.cursor()
-    cursor.execute('SELECT * FROM orders WHERE customer_name = ?', (session['customer_name'],))
+
+    cursor.execute('SELECT * FROM orders WHERE customer_name = ? AND status = ?', (session['customer_name'],'delivered',))
     orders = cursor.fetchall()
     return render_template('/customer/customer_orders.html',orders=orders,count=customer_orders_count(),cartcount=get_cart_count())
 
