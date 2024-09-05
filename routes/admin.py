@@ -329,7 +329,7 @@ def delivery_boys():
 def get_order_ids():
     conn = get_db_connection()
     cursor = conn.cursor()
-    cursor.execute("SELECT id FROM orders WHERE status = 'Received'")
+    cursor.execute("SELECT id FROM orders WHERE status = 'Received' and owner_name=?",(session['admin_name'],))
     order_ids = [row[0] for row in cursor.fetchall()]
     conn.close()
     return jsonify(order_ids=order_ids)
