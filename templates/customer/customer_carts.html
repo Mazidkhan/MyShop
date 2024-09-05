@@ -26,7 +26,7 @@
                     <td>{{ item['product_name'] }}</td>
                     <td>{{ item['product_brand'] }}</td>
                     <td>{{ item['product_category'] }}</td>
-                    <td class="price">${{ item['price'] }}</td>
+                    <td class="price">Rs.{{ item['price'] }}</td>
                     <td>{{ item['discount'] }}%</td>
                     <td>
                         <select name="quantity" class="quantity-dropdown">
@@ -45,7 +45,7 @@
             <!-- Row for Total Price -->
             <tr>
                 <td colspan="7" style="text-align:right;"><strong>Total Price:</strong></td>
-                <td id="total-price">${{ grand_total }}</td>
+                <td id="total-price">{{ grand_total }}</td>
             </tr>
         </tbody>
     </table>
@@ -84,7 +84,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
-        totalPriceElement.textContent = `$${totalPrice.toFixed(2)}`;
+        totalPriceElement.textContent = `Rs.${totalPrice.toFixed(2)}`;
     }
 
     quantityDropdowns.forEach(dropdown => {

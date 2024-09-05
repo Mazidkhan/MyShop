@@ -27,6 +27,7 @@
                     <th>Brand</th>
                     <th>Quantity</th>
                     <th>Price</th>
+                    <th>Total Price</th>
                 </tr>
             </thead>
             <tbody id="orderDetailsBody">
@@ -103,12 +104,10 @@ function updateStatus(orderID) {
     });
 }
 
-// Function to close the popup
 function closePopup() {
     document.getElementById('popupForm').style.display = 'none';
 }
 
-// Function to fetch and display order details
 function fetchOrderDetails() {
     console.log("Button clicked!"); // Add this line to check
     var orderID = document.getElementById('order_id').value;
@@ -130,6 +129,7 @@ function fetchOrderDetails() {
                 <td>${item.product_brand}</td>
                 <td>${item.quantity}</td>
                 <td>${item.price}</td>
+                <td>${item.quantity * item.price}</td>
             `;
             orderDetailsBody.appendChild(row);
         });
