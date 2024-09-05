@@ -145,11 +145,26 @@ def delete_from_cart(index):
 def customer_delivery():
     conn = get_db_connection()
     cursor = conn.cursor()
-    cursor.execute('SELECT * FROM delivery_orders WHERE customer_name = ? AND status != ?', (session['customer_name'], 'delivered'))
+
+    # Revised SQL query to handle both scenarios: orders not yet assigned and those assigned but not delivered
+    cursor.execute('''
+        SELECT orders.id AS order_id, orders.status AS order_status, 
+               delivery_orders.delivery_boy, delivery_boys.phone, 
+               delivery_boys.email
+        FROM orders
+        LEFT JOIN delivery_orders ON orders.id = delivery_orders.order_id
+        LEFT JOIN delivery_boys ON delivery_orders.delivery_boy = delivery_boys.delivery_boy
+        WHERE orders.customer_name = ? AND 
+              (orders.status != ? OR delivery_orders.status != ?)
+    ''', (session['customer_name'], 'delivered', 'delivered'))
+
     deliveries = cursor.fetchall()
-    cursor.execute('SELECT * FROM delivery_boys WHERE delivery_boy = ?', (deliveries[0][2],))
-    delivery_boy = cursor.fetchall()
-    return render_template('/customer/customer_deliveries.html', deliveries=deliveries,delivery_boy=delivery_boy,cartcount=get_cart_count(),count=customer_orders_count())
+
+    return render_template('/customer/customer_deliveries.html',
+                           deliveries=deliveries,
+                           cartcount=get_cart_count(),
+                           count=customer_orders_count())
+
 
 @customer_bp.route('/logout')
 def customer_logout():
@@ -267,7 +282,12 @@ def customer_orders():
     conn = get_db_connection()
     cursor = conn.cursor()
 
-    cursor.execute('SELECT * FROM orders WHERE customer_name = ? AND status = ?', (session['customer_name'],'delivered',))
+    cursor.execute('''
+        SELECT * FROM orders
+        WHERE customer_name = ?
+        ORDER BY CASE WHEN status != 'delivered' THEN 0 ELSE 1 END
+    ''', (session['customer_name'],))
+
     orders = cursor.fetchall()
     return render_template('/customer/customer_orders.html',orders=orders,count=customer_orders_count(),cartcount=get_cart_count())
 
