@@ -47,9 +47,6 @@ def submit_cart():
     current_date = datetime.now().strftime('%Y-%m-%d')
 
     try:
-        # Generate a unique cart ID (UUID)
-
-        # Insert all items in the cart with the same cart_id
         for item in cart:
             cursor.execute('''
                 INSERT INTO orders (customer_name, product_name, product_brand, product_category, quantity, price, total_price, date, phone, address, owner_name, shop_name)
@@ -134,7 +131,6 @@ def delete_from_cart(index):
     cart_items = session.get('cart', [])
 
     if 0 <= index < len(cart_items):
-        # Remove the item at the specified index
         del cart_items[index]
         session['cart'] = cart_items  # Update the cart in the session
         session.modified = True  # Mark the session as modified
@@ -146,7 +142,6 @@ def customer_delivery():
     conn = get_db_connection()
     cursor = conn.cursor()
 
-    # Revised SQL query to handle both scenarios: orders not yet assigned and those assigned but not delivered
     cursor.execute('''
         SELECT orders.id AS order_id, orders.status AS order_status, 
                delivery_orders.delivery_boy, delivery_boys.phone, 
@@ -164,7 +159,6 @@ def customer_delivery():
                            deliveries=deliveries,
                            cartcount=get_cart_count(),
                            count=customer_orders_count())
-
 
 @customer_bp.route('/logout')
 def customer_logout():
@@ -306,7 +300,7 @@ def customer():
                 session['customer_phone'] = user['phone']
                 session['customer_address'] = user['address']
                 print(f'Count:{customer_orders_count()}')
-                return render_template('/customer/customer_base.html',count=customer_orders_count())
+                return render_template('/customer/customer_base.html',count=customer_orders_count(),cartcount=get_cart_count())
             else:
                 return 'Invalid credentials'
         elif 'register_submit' in request.form:

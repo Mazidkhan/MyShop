@@ -147,7 +147,7 @@
                         <input type="text" id="registerAddress" name="address" required>
                         <input type="submit" name="register_submit" value="Register">
                     </form>
-                    <button class="close-btn" onclick="hideForm(event, 'registerForm')">Close</button>
+                    <button class="close-btn" onclick="hideForm(null, 'registerForm')">Close</button>
                 </div>
             </div>
         </div>
@@ -159,9 +159,7 @@
         }
 
         function hideForm(event, formId) {
-            if (event.target.classList.contains('overlay')) {
-                document.getElementById(formId).style.display = 'none';
-            }
+            document.getElementById(formId).style.display = 'none';
         }
     </script>
 </body>

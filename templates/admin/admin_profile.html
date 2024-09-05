@@ -5,26 +5,53 @@
 {% block content %}
 <style>
     .profile-container {
-        max-width: 800px;
-        margin: auto;
-        padding: 20px;
+        max-width: 700px;
+        margin: 40px auto;
+        padding: 30px;
         border: 1px solid #ddd;
-        border-radius: 8px;
-        background-color: #f9f9f9;
+        border-radius: 10px;
+        background-color: #f3f4f6;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        font-family: 'Arial', sans-serif;
     }
     .profile-container h1 {
         text-align: center;
-        color: #333;
+        color: #2c3e50;
+        margin-bottom: 30px;
+        font-size: 28px;
     }
     .profile-item {
-        margin-bottom: 15px;
-        padding: 10px;
-        border: 1px solid #ddd;
-        border-radius: 4px;
+        margin-bottom: 20px;
+        padding: 15px;
+        border: 1px solid #ccc;
+        border-radius: 6px;
         background-color: #fff;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        transition: background-color 0.3s ease;
+    }
+    .profile-item:hover {
+        background-color: #e8f0fe;
     }
     .profile-item label {
-        font-weight: bold;
+        font-weight: 600;
+        color: #2c3e50;
+        font-size: 16px;
+    }
+    .profile-item p {
+        margin: 0;
+        color: #34495e;
+        font-size: 15px;
+        line-height: 1.6;
+    }
+    .profile-info {
+        text-align: right;
+        flex: 1;
+        margin-left: 20px;
+    }
+    .profile-item label::after {
+        content: ":";
     }
 </style>
 
@@ -32,12 +59,24 @@
     <h1>Profile</h1>
     {% for admin in admin %}
     <div class="profile-item">
-        <p><label>Name:</label> {{ admin['owner_name'] }}</p>
-        <p><label>Phone:</label> {{ admin['phone'] }}</p>
-        <p><label>Address:</label> {{ admin['address'] }}</p>
-        <p><label>Shop:</label> {{ admin['shop_name'] }}</p>
-        <p><label>City:</label> {{ admin['city'] }}</p>
-        <p><label>Location:</label> {{ admin['location'] }}</p>
+        <label>Name</label>
+        <div class="profile-info">{{ admin['owner_name'] }}</div>
+    </div>
+    <div class="profile-item">
+        <label>Phone</label>
+        <div class="profile-info">{{ admin['phone'] }}</div>
+    </div>
+    <div class="profile-item">
+        <label>Address</label>
+        <div class="profile-info">{{ admin['address'] }}</div>
+    </div>
+    <div class="profile-item">
+        <label>City</label>
+        <div class="profile-info">{{ admin['city'] }}</div>
+    </div>
+    <div class="profile-item">
+        <label>Location</label>
+        <div class="profile-info">{{ admin['location'] }}</div>
     </div>
     {% endfor %}
 </div>

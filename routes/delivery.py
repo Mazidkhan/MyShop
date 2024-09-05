@@ -102,4 +102,4 @@ def delivery_logout():
 
 @delivery_bp.route('/base')
 def base():
-    return render_template('delivery_base.html')
+    return render_template('delivery_base.html', count=curret_delivery_count())

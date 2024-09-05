@@ -298,7 +298,7 @@ def register():
     conn.close()
     session['admin_shop'] = shop_name
     session['admin_name'] = owner_name
-    return render_template('admin/admin_base.html')
+    return render_template('admin/admin_base.html', count=in_process_count(), delivery_orders_count=delivery_orders_count())
 
 def delivery_orders_count():
     conn = get_db_connection()
