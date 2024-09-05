@@ -29,7 +29,6 @@
                     <p class="card-text"><strong>Category:</strong> {{ product[3] }}</p>
                     <p class="card-text"><strong>Price:</strong> ${{ product[4] }}</p>
                     <p class="card-text"><strong>Discount:</strong> {{ product[5] }}%</p>
-                    <p class="card-text"><strong>Shop Name:</strong> {{ product[8] }}</p>
                     <div class="card-buttons">
                         <a href="{{ url_for('customer.product_description', product_id=product[6]) }}" style="text-decoration: none; display: flex; justify-content: center; align-items: center; height: 100%;" class="btn btn-primary">
                             Desc

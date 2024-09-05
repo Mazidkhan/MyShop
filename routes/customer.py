@@ -48,15 +48,13 @@ def submit_cart():
 
     try:
         # Generate a unique cart ID (UUID)
-        cart_id = str(uuid.uuid4())
 
         # Insert all items in the cart with the same cart_id
         for item in cart:
             cursor.execute('''
-                INSERT INTO orders (id, customer_name, product_name, product_brand, product_category, quantity, price, total_price, date, phone, address, owner_name, shop_name)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                INSERT INTO orders (customer_name, product_name, product_brand, product_category, quantity, price, total_price, date, phone, address, owner_name, shop_name)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             ''', (
-                cart_id,  # Use the same unique cart_id for all items in the cart
                 customer_name,
                 item['product_name'],
                 item['product_brand'],
