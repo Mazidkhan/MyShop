@@ -95,7 +95,7 @@
 
     // Populate the Order ID dropdown with values from the database
     document.addEventListener('DOMContentLoaded', function() {
-        fetch('http://127.0.0.1:5000/admin/get_order_ids') // Flask route to fetch order IDs
+        fetch('http://20.157.92.44/admin/get_order_ids') // Flask route to fetch order IDs
         .then(response => response.json())
         .then(data => {
             var select = document.getElementById('orderId');
@@ -123,7 +123,7 @@
         var deliveryBoy = document.getElementById('deliveryBoy').value;
 
         if (orderId && deliveryBoy) {
-            fetch('http://127.0.0.1:5000/admin/assign_order', {
+            fetch('http://20.157.92.44/admin/assign_order', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -153,7 +153,7 @@ document.getElementById('filterStatusBtn').addEventListener('click', function() 
     var selectedStatus = document.getElementById('orderStatus').value;
 
     // Fetch and filter orders based on the selected status
-    fetch('http://127.0.0.1:5000/admin/filter_orders?status=' + selectedStatus)
+    fetch('http://20.157.92.44/admin/filter_orders?status=' + selectedStatus)
     .then(response => response.json())
     .then(data => {
         var tbody = document.querySelector('table tbody');

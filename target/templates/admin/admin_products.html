@@ -150,7 +150,7 @@ document.addEventListener('DOMContentLoaded', function() {
     document.querySelectorAll('.edit-button').forEach(function(button) {
         button.addEventListener('click', function() {
             var id = this.getAttribute('data-id');
-            fetch(`http://127.0.0.1:5000/admin/product/${id}`)
+            fetch(`http://20.157.92.44/admin/product/${id}`)
                 .then(response => response.json())
                 .then(data => {
                     if (data.error) {
@@ -174,7 +174,7 @@ document.addEventListener('DOMContentLoaded', function() {
         button.addEventListener('click', function() {
             var id = this.getAttribute('data-id');
             if (confirm('Are you sure you want to delete this product?')) {
-                fetch(`http://127.0.0.1:5000/admin/delete_product/${id}`, {
+                fetch(`http://20.157.92.44/admin/delete_product/${id}`, {
                     method: 'DELETE',
                 })
                 .then(response => {
@@ -195,7 +195,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         var formData = new FormData(this);
 
-        fetch('http://127.0.0.1:5000/admin/update_product', {
+        fetch('http://20.157.92.44/admin/update_product', {
             method: 'PUT',
             body: formData
         })

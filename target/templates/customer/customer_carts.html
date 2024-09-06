@@ -90,7 +90,7 @@ document.addEventListener('DOMContentLoaded', () => {
     quantityDropdowns.forEach(dropdown => {
         dropdown.addEventListener('change', (event) => {
             const rowIndex = Array.from(dropdown.parentNode.parentNode.parentNode.children).indexOf(dropdown.parentNode.parentNode);
-            fetch('http://127.0.0.1:5000/customer/update_quantity', {
+            fetch('http://20.157.92.44/customer/update_quantity', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
