@@ -1,0 +1,1 @@
+scp -i ./myshop.pem -r ./target/* azureuser@20.157.92.44:/home/azureuser/MyShop
