@@ -18,6 +18,10 @@ jobs:
       with:
         ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
-    - name: Copy files using SCP
+    - name: Sync files using rsync
       run: |
-        scp -o StrictHostKeyChecking=no -r ./target/* azureuser@20.157.92.44:/home/azureuser/MyShop
+        rsync -avz \
+          --exclude='venv/' \
+          --exclude='.ignore' \
+          -e 'ssh -o StrictHostKeyChecking=no' \
+          ./ azureuser@20.157.92.44:/home/azureuser/MyShop
