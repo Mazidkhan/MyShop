@@ -304,14 +304,15 @@ def customer():
             else:
                 return 'Invalid credentials'
         elif 'register_submit' in request.form:
-            username = request.form['username']
+            session['customer_name'] = request.form['username']
             password = request.form['password']
             email = request.form['email']
-            phone = request.form['phone']
-            address = request.form['address']
+            session['customer_phone'] = request.form['phone']
+            session['customer_address'] = request.form['address']
             conn = get_db_connection()
             conn.execute('INSERT INTO customer (customer_name, customer_password, email, phone, address) VALUES (?, ?, ?, ?, ?)',
-                         (username, password, email, phone, address))
+                         (session['customer_name'], password, email, session['customer_phone'], session['customer_address']))
+            
             conn.commit()
             conn.close()
             return render_template('/customer/customer_base.html')
