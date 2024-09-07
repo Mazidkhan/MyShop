@@ -27,8 +27,12 @@
                     <h3 class="card-title">{{ product[1] }}</h3>
                     <p class="card-text"><strong>Brand:</strong> {{ product[2] }}</p>
                     <p class="card-text"><strong>Category:</strong> {{ product[3] }}</p>
-                    <p class="card-text"><strong>Price:</strong> Rs.{{ product[4]  }} cut:{{ product[4]  -(product[4]*(product[5]/100))}}</p>
-                    <p class="card-text"><strong>Discount:</strong> {{ product[5] }}%</p>
+                    <p class="card-text">
+                        <strong>Price:</strong> 
+                        <span style="text-decoration: line-through; color: red;">Rs.{{ product[4] }}</span> 
+                        <span style="color: green; font-weight: bold;">Rs.{{ product[4]  - (product[4]*(product[5]/100)) }}</span>
+                    </p>
+                                        <p class="card-text"><strong>Discount:</strong> {{ product[5] }}%</p>
                     <div class="card-buttons">
                         <a href="{{ url_for('customer.product_description', product_id=product[6]) }}" style="text-decoration: none; display: flex; justify-content: center; align-items: center; height: 100%;" class="btn btn-primary">
                             Desc
