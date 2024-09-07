@@ -26,7 +26,7 @@
                     <td>{{ item['product_name'] }}</td>
                     <td>{{ item['product_brand'] }}</td>
                     <td>{{ item['product_category'] }}</td>
-                    <td class="price">Rs.{{ item['price'] }}</td>
+                    <td class="price">Rs.{{ item['price'] -(item['price']*(item['discount']/100))}}</td>
                     <td>{{ item['discount'] }}%</td>
                     <td>
                         <select name="quantity" class="quantity-dropdown">
