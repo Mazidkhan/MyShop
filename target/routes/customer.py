@@ -48,6 +48,7 @@ def submit_cart():
 
     try:
         for item in cart:
+            price=item['price'] -(item['price']*(item['discount']/100))
             cursor.execute('''
                 INSERT INTO orders (customer_name, product_name, product_brand, product_category, quantity, price, total_price, date, phone, address, owner_name, shop_name)
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
@@ -57,8 +58,8 @@ def submit_cart():
                 item['product_brand'],
                 item['product_category'],
                 item['quantity'],
-                item['price'] -(item['price']*(item['discount']/100)),
-                item['quantity'] * (item['price'] -(item['price']*(item['discount']/100))),
+                price,
+                item['quantity'] * price,
                 current_date,
                 customer_phone,
                 customer_address,
