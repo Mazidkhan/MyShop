@@ -52,9 +52,5 @@
     {% endfor %}
 </div>
 
-<script>
-    function changeImage(imageSrc, productId) {
-        document.getElementById('mainImage' + productId).src = imageSrc;
-    }
-</script>
+<script src="{{url_for('static',filename='js/customerscript.js')}}"></script>
 {% endblock %}

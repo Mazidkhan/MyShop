@@ -56,22 +56,5 @@
     <a href="{{ url_for('customer.customer_products', page=page+1, location=selected_location, search=request.args.get('search', '')) }}" class="btn btn-secondary">Next</a>
     {% endif %}
 </div>
-
-<!-- Add JavaScript -->
-<script>
-function addToCart(productId) {
-    fetch('http://20.157.92.44/customer/add_to_cart', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ product_id: productId })
-    })
-    .then(response => response.json())
-    .then(data => {
-        alert('Product added to cart!');
-    })
-    .catch(error => console.error('Error:', error));
-}
-</script>
+<script src="{{url_for('static',filename='js/customerscript.js')}}"></script>
 {% endblock %}

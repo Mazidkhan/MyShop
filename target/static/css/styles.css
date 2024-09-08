@@ -7,43 +7,6 @@ body {
     height: 100vh;
     margin: 0;
 }
-.popup {
-    display: none;
-    position: fixed;
-    z-index: 1;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    overflow: auto;
-    background-color: rgba(0,0,0,0.4);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.popup-content {
-    background-color: #fefefe;
-    padding: 20px;
-    border: 1px solid #888;
-    width: 310px; /* Adjust width as needed */
-    box-shadow: 0px 0px 10px rgba(0,0,0,0.2);
-    border-radius: 8px; /* Optional: rounded corners */
-}
-
-.close {
-    color: #aaa;
-    float: right;
-    font-size: 24px;
-    font-weight: bold;
-}
-
-.close:hover,
-.close:focus {
-    color: black;
-    text-decoration: none;
-    cursor: pointer;
-}
 
 form label {
     display: block;
@@ -386,7 +349,113 @@ tbody td {
 .edit-button:hover {
     background-color: #45a049;
 }
+.profile-container {
+    max-width: 700px;
+    margin: 40px auto;
+    padding: 30px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    background-color: #f3f4f6;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    font-family: 'Arial', sans-serif;
+}
+.profile-container h1 {
+    text-align: center;
+    color: #2c3e50;
+    margin-bottom: 30px;
+    font-size: 28px;
+}
+.profile-item {
+    margin-bottom: 20px;
+    padding: 15px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    background-color: #fff;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: background-color 0.3s ease;
+}
+.profile-item:hover {
+    background-color: #e8f0fe;
+}
+.profile-item label {
+    font-weight: 600;
+    color: #2c3e50;
+    font-size: 16px;
+}
+.profile-item p {
+    margin: 0;
+    color: #34495e;
+    font-size: 15px;
+    line-height: 1.6;
+}
+.profile-info {
+    text-align: right;
+    flex: 1;
+    margin-left: 20px;
+}
+.profile-item label::after {
+    content: ":";
+}
 
 .delete-button:hover {
     background-color: #e53935;
 }
+    /* Popup form styles */
+    .popup {
+        display: none; /* Hidden by default */
+        position: fixed; /* Stay in place */
+        z-index: 1; /* Sit on top */
+        left: 0;
+        top: 0;
+        width: 100%; /* Full width */
+        height: 100%; /* Full height */
+        overflow: auto; /* Enable scroll if needed */
+        background-color: rgba(0, 0, 0, 0.4); /* Black w/ opacity */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .popup-content {
+        background-color: #fefefe;
+        padding: 10px; /* Reduced padding */
+        border: 1px solid #888;
+        width: 50%; /* Reduced width */
+        max-width: 400px; /* Optional: limit the maximum width */
+        max-height: 80%; /* Limit the height to 80% of the viewport */
+        overflow-y: auto; /* Add vertical scroll if content exceeds max-height */
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        border-radius: 8px; /* Optional: rounded corners */
+    }
+
+    .close {
+        color: #aaa;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+        cursor: pointer;
+    }
+
+    .close:hover,
+    .close:focus {
+        color: black;
+        text-decoration: none;
+    }
+
+    .form-group {
+        margin-bottom: 10px; /* Reduced margin between form groups */
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 3px; /* Reduced margin below labels */
+    }
+
+    .form-group input {
+        width: 100%;
+        padding: 6px; /* Reduced padding inside input fields */
+        border: 1px solid #ddd;
+        border-radius: 4px;
+    }

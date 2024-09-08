@@ -49,55 +49,7 @@
     </div>
 </div>
 
-<!-- JavaScript for Popup -->
-<script>
-document.getElementById('addButton').onclick = function() {
-    document.getElementById('popupForm').style.display = 'flex';
-}
+<script src="{{ url_for('static', filename='js/adminscript.js') }}"></script>
 
-document.getElementsByClassName('close')[0].onclick = function() {
-    document.getElementById('popupForm').style.display = 'none';
-}
-
-window.onclick = function(event) {
-    if (event.target == document.getElementById('popupForm')) {
-        document.getElementById('popupForm').style.display = 'none';
-    }
-}
-
-function submitForm(event) {
-    event.preventDefault(); // Prevent the default form submission
-
-    const formData = new FormData(document.getElementById('deliveryBoyForm'));
-    const data = {
-        boy: formData.get('boy'),
-        phone: formData.get('phone'),
-        email: formData.get('email'),
-        password: formData.get('password')
-    };
-
-    fetch('http://20.157.92.44/admin/add_delivery_boy', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(data)
-    })
-    .then(response => response.json())
-    .then(result => {
-        if (result.status === 'success') {
-            alert('Delivery boy added successfully!');
-            document.getElementById('popupForm').style.display = 'none'; // Close the popup
-            // Optionally, you could also refresh the table or perform other UI updates here
-        } else {
-            alert('Error adding delivery boy.');
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        alert('An error occurred while adding the delivery boy.');
-    });
-}
-</script>
-
+</body>
 {% endblock %}
