@@ -4,56 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Main Page</title>
-    <style>
-        body {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-            font-family: 'Arial', sans-serif;
-            background: linear-gradient(135deg, #74ebd5 0%, #acb6e5 100%);
-        }
-
-        .container {
-            text-align: center;
-            background-color: rgba(255, 255, 255, 0.85);
-            padding: 40px;
-            border-radius: 15px;
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
-        }
-
-        h1 {
-            font-size: 2.5em;
-            margin-bottom: 30px;
-            color: #333;
-        }
-
-        .button {
-            display: inline-block;
-            padding: 12px 30px;
-            margin: 10px;
-            font-size: 18px;
-            font-weight: bold;
-            color: white;
-            text-transform: uppercase;
-            text-align: center;
-            text-decoration: none;
-            background-color: #007bff;
-            border-radius: 50px;
-            border: none;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(0, 123, 255, 0.5);
-        }
-
-        .button:hover {
-            background-color: #0056b3;
-            box-shadow: 0 6px 20px rgba(0, 86, 179, 0.6);
-            transform: translateY(-3px);
-        }
-    </style>
 </head>
+<link rel="stylesheet" href="{{url_for('static',filename='css/main.css')}}"/>
 <body>
     <div class="container">
         <h1>Welcome to Virtual Public Shop</h1>
