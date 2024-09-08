@@ -46,11 +46,14 @@ document.addEventListener('DOMContentLoaded', () => {
     updateTotalPrice();
 });
 function showForm(formId) {
-    document.getElementById(formId).style.display = 'block';
+    document.getElementById(formId).style.display = 'flex'; // Set to flex for centering
 }
 
 function hideForm(event, formId) {
-    document.getElementById(formId).style.display = 'none';
+    if (event) {
+        event.stopPropagation();
+    }
+    document.getElementById(formId).style.display = 'none'; // Hide the form
 }
 function addToCart(productId) {
     fetch('http://127.0.0.1:5000/customer/add_to_cart', {
